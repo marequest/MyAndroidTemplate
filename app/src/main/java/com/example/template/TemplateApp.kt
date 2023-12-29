@@ -233,6 +233,7 @@ fun TemplateAppContent(
         ) {
             TemplateNavHost(
                 navController = navController,
+                navigateToTopLevelDestination = navigateToTopLevelDestination,
                 homeUIState = homeUIState,
                 contentType = contentType,
                 modifier = Modifier.weight(1f)
@@ -251,6 +252,7 @@ fun TemplateAppContent(
 @Composable
 fun TemplateNavHost(
     navController: NavHostController,
+    navigateToTopLevelDestination: (TemplateTopLevelDestination) -> Unit,
     homeUIState: HomeUIState,
     contentType: ContentType,
     modifier: Modifier
@@ -258,8 +260,15 @@ fun TemplateNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = NavDestinations.INBOX
+        startDestination = NavDestinations.LOGIN
     ) {
+        composable(NavDestinations.LOGIN){
+            LoginScreen(
+                onSubmitSuccessful = {
+                    TemplateNavigationActions(navController).navigateTo(NavDestinations.INBOX)
+                }
+            )
+        }
         composable(NavDestinations.INBOX) {
             EmptyComingSoon()
         }
