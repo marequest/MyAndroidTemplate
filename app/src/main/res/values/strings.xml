@@ -13,4 +13,5 @@
     <string name="edit">Edit</string>
     <string name="empty_screen_title">Screen under construction</string>
     <string name="empty_screen_subtitle">This screen will soon be available.</string>
+    <string name="tab_login">Login</string>
 </resources>

@@ -63,6 +63,7 @@ import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import com.example.template.navigation.NavDestinations
 import com.example.template.navigation.NavigationDrawerContent
+import com.example.template.navigation.TOP_LEVEL_DESTINATIONS
 import com.example.template.navigation.TemplateBottomNavigationBar
 import com.example.template.navigation.TemplateNavigationActions
 import com.example.template.navigation.TemplateNavigationRail
@@ -80,6 +81,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TemplateApp(
+    viewModel: TemplateHomeViewModel,
     homeUIState: HomeUIState,
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>
@@ -98,10 +100,6 @@ fun TemplateApp(
     }
 
 
-    /**
-     * This will help us select type of navigation and content type depending on window size and
-     * fold state of the device.
-     */
     val navigationType: NavigationType
     val contentType: ContentType
 
@@ -134,12 +132,15 @@ fun TemplateApp(
         }
     }
 
-    TemplateNavigationWrapperUI(navigationType, contentType, homeUIState)
+    TemplateNavigationWrapperUI(viewModel, navigationType, contentType, homeUIState)
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TemplateNavigationWrapperUI(
+    viewModel: TemplateHomeViewModel,
     navigationType: NavigationType,
     contentType: ContentType,
     homeUIState: HomeUIState
@@ -154,7 +155,7 @@ private fun TemplateNavigationWrapperUI(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val selectedDestination = navBackStackEntry?.destination?.route ?: NavDestinations.INBOX
 
-    if (navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
+    if (navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER && homeUIState.loggedIn) {
         PermanentNavigationDrawer(
             drawerContent = {
                 PermanentDrawerSheet {
@@ -166,12 +167,13 @@ private fun TemplateNavigationWrapperUI(
             }
         ) {
             TemplateAppContent(
+                viewModel = viewModel,
                 navController = navController,
                 navigationType = navigationType,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
                 contentType = contentType,
-                homeUIState = homeUIState,
+                homeUIState = homeUIState
             )
         }
     } else {
@@ -192,6 +194,7 @@ private fun TemplateNavigationWrapperUI(
             drawerState = drawerState
         ) {
             TemplateAppContent(
+                viewModel = viewModel,
                 navController = navController,
                 navigationType = navigationType,
                 selectedDestination = selectedDestination,
@@ -211,6 +214,7 @@ private fun TemplateNavigationWrapperUI(
 
 @Composable
 fun TemplateAppContent(
+    viewModel: TemplateHomeViewModel,
     navController: NavHostController,
     navigationType: NavigationType,
     selectedDestination: String,
@@ -219,8 +223,9 @@ fun TemplateAppContent(
     homeUIState: HomeUIState,
     onDrawerClicked: () -> Unit = {}
 ) {
+
     Row(modifier = Modifier.fillMaxSize()) {
-        AnimatedVisibility(visible = navigationType == NavigationType.NAVIGATION_RAIL) {
+        AnimatedVisibility(visible = (navigationType == NavigationType.NAVIGATION_RAIL && homeUIState.loggedIn)) {
             TemplateNavigationRail(
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
@@ -236,10 +241,16 @@ fun TemplateAppContent(
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
                 homeUIState = homeUIState,
                 contentType = contentType,
+                onLoginSuccessful =
+                {
+                    navigateToTopLevelDestination(TOP_LEVEL_DESTINATIONS[0])
+                    viewModel.logIn()
+                },
+                selectedDestination = selectedDestination,
                 modifier = Modifier.weight(1f)
             )
 
-            AnimatedVisibility(visible = navigationType == NavigationType.BOTTOM_NAVIGATION) {
+            AnimatedVisibility(visible = (navigationType == NavigationType.BOTTOM_NAVIGATION && homeUIState.loggedIn)) {
                 TemplateBottomNavigationBar(
                     selectedDestination = selectedDestination,
                     navigateToTopLevelDestination = navigateToTopLevelDestination
@@ -255,17 +266,21 @@ fun TemplateNavHost(
     navigateToTopLevelDestination: (TemplateTopLevelDestination) -> Unit,
     homeUIState: HomeUIState,
     contentType: ContentType,
+    onLoginSuccessful: () -> Unit = {},
+    selectedDestination: String,
     modifier: Modifier
 ) {
+    val startDestination = if (!homeUIState.loggedIn) NavDestinations.LOGIN else selectedDestination
+
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = NavDestinations.LOGIN
+        startDestination = startDestination
     ) {
         composable(NavDestinations.LOGIN){
             LoginScreen(
-                onSubmitSuccessful = {
-                    TemplateNavigationActions(navController).navigateTo(NavDestinations.INBOX)
+                onLoginSuccessful = {
+                    onLoginSuccessful()
                 }
             )
         }
@@ -274,8 +289,6 @@ fun TemplateNavHost(
         }
         composable(NavDestinations.DM) {
             EmptyComingSoon()
-
-            // TODO disable
 //            if(contentType == ContentType.DUAL_PANE){
 //                TemplateListAndDetailContent(
 //                    homeUIState = homeUIState,

@@ -20,6 +20,10 @@ class TemplateHomeViewModel(private val emailsRepository: EmailsRepository = Ema
         observeEmails()
     }
 
+    fun logIn() {
+        _uiState.value = _uiState.value.copy(loggedIn = true)
+    }
+
     private fun observeEmails() {
         viewModelScope.launch {
             emailsRepository.getAllEmails()
@@ -34,7 +38,8 @@ class TemplateHomeViewModel(private val emailsRepository: EmailsRepository = Ema
 }
 
 data class HomeUIState(
-    val emails : List<Email> = emptyList(),
+    val emails: List<Email> = emptyList(),
+    val loggedIn: Boolean = false,
     val loading: Boolean = false,
     val error: String? = null
 )

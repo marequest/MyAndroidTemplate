@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
-    onSubmitSuccessful: () -> Unit = {}
+    onLoginSuccessful: () -> Unit = {}
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -125,7 +125,7 @@ fun LoginScreen(
         // Login button
         Button(
             onClick = {
-                onSubmitSuccessful()
+                onLoginSuccessful()
                 // TODO kad budes podesavao da zapravo radi
 //                if (email.isNotEmpty() && password.isNotEmpty()) {
 //                    // Handle login click
