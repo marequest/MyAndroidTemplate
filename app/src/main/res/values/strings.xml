@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Template</string>
+    <string name="reply">Reply</string>
+    <string name="reply_all">Reply to all</string>
+    <string name="search">Search</string>
+    <string name="search_replies">Search replies</string>
+    <string name="profile">Profile</string>
+    <string name="navigation_drawer">Navigation drawer</string>
+    <string name="tab_inbox">Inbox</string>
+    <string name="tab_article">Article</string>
+    <string name="tab_dm">Direct message</string>
+    <string name="tab_groups">Groups</string>
+    <string name="edit">Edit</string>
+    <string name="empty_screen_title">Screen under construction</string>
+    <string name="empty_screen_subtitle">This screen will soon be available.</string>
+</resources>
