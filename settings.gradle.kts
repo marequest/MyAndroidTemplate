@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Template"
 include(":app")
- 
+include(":network")
