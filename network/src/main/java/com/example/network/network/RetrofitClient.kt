@@ -14,7 +14,7 @@ class RetrofitClient {
     companion object {
 
         private var retrofit: Retrofit? = null
-        private const val BASE_URL = "https://your-api-base-url.com/"
+        private const val BASE_URL = "https://cat-fact.herokuapp.com/"
 
         fun getRetrofitInstance(): Retrofit {
             if (retrofit == null) {

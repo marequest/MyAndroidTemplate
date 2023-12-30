@@ -202,6 +202,7 @@ fun TemplateAppContent(
             .background(MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             TemplateNavHost(
+                viewModel = viewModel,
                 navController = navController,
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
                 homeUIState = homeUIState,
@@ -227,6 +228,7 @@ fun TemplateAppContent(
 
 @Composable
 fun TemplateNavHost(
+    viewModel: TemplateHomeViewModel,
     navController: NavHostController,
     navigateToTopLevelDestination: (TemplateTopLevelDestination) -> Unit,
     homeUIState: HomeUIState,
@@ -250,10 +252,10 @@ fun TemplateNavHost(
             )
         }
         composable(NavDestinations.INBOX) {
-            EmptyComingSoon()
+            EmptyComingSoon(viewModel)
         }
         composable(NavDestinations.DM) {
-            EmptyComingSoon()
+            EmptyComingSoon(viewModel)
 //            if(contentType == ContentType.DUAL_PANE){
 //                TemplateListAndDetailContent(
 //                    homeUIState = homeUIState,
@@ -267,10 +269,10 @@ fun TemplateNavHost(
 //            }
         }
         composable(NavDestinations.ARTICLES) {
-            EmptyComingSoon()
+            EmptyComingSoon(viewModel)
         }
         composable(NavDestinations.GROUPS) {
-            EmptyComingSoon()
+            EmptyComingSoon(viewModel)
         }
     }
 }
