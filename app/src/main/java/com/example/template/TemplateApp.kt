@@ -16,6 +16,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,6 +35,8 @@ import com.example.template.navigation.TemplateBottomNavigationBar
 import com.example.template.navigation.TemplateNavigationActions
 import com.example.template.navigation.TemplateNavigationRail
 import com.example.template.navigation.TemplateTopLevelDestination
+import com.example.template.screens.EmptyComingSoon
+import com.example.template.screens.HomeScreen
 import com.example.template.utils.ContentType
 import com.example.template.utils.DevicePosture
 import com.example.template.utils.NavigationType
@@ -252,10 +255,10 @@ fun TemplateNavHost(
             )
         }
         composable(NavDestinations.INBOX) {
-            EmptyComingSoon(viewModel)
+            HomeScreen(viewModel)
         }
         composable(NavDestinations.DM) {
-            EmptyComingSoon(viewModel)
+            EmptyComingSoon()
 //            if(contentType == ContentType.DUAL_PANE){
 //                TemplateListAndDetailContent(
 //                    homeUIState = homeUIState,
@@ -269,10 +272,10 @@ fun TemplateNavHost(
 //            }
         }
         composable(NavDestinations.ARTICLES) {
-            EmptyComingSoon(viewModel)
+            EmptyComingSoon()
         }
         composable(NavDestinations.GROUPS) {
-            EmptyComingSoon(viewModel)
+            EmptyComingSoon()
         }
     }
 }

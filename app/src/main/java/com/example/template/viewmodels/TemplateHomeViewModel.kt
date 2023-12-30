@@ -27,9 +27,14 @@ class TemplateHomeViewModel(private val emailsRepository: EmailsRepository = Ema
     val uiState: StateFlow<HomeUIState> = _uiState
 
     private val apiService = RetrofitClient.getRetrofitInstance().create(ApiService::class.java)
-
     private val _catState = MutableStateFlow(CatsState())
     val catState: StateFlow<CatsState> = _catState
+
+
+    init {
+        observeEmails()
+        fetchCatFacts()
+    }
 
     fun fetchCatFacts() {
         viewModelScope.launch {
@@ -67,10 +72,6 @@ class TemplateHomeViewModel(private val emailsRepository: EmailsRepository = Ema
                 _catState.value = _catState.value.copy(isLoading = false)
             }
         }
-    }
-
-    init {
-        observeEmails()
     }
 
     fun logIn() {

@@ -57,10 +57,10 @@ fun LoginScreen(
     ) {
         // Logo or app name
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            painter = painterResource(id = R.drawable.logocopy),
             contentDescription = null,
             modifier = Modifier
-                .size(72.dp)
+                .size(150.dp)
                 .padding(bottom = 16.dp)
         )
 

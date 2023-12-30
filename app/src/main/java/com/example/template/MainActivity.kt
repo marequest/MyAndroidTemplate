@@ -9,6 +9,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
@@ -38,7 +39,6 @@ class MainActivity : ComponentActivity() {
                 val windowSize = calculateWindowSizeClass(activity = this)
                 val uiState = viewModel.uiState.collectAsState().value
                 val displayFeatures = calculateDisplayFeatures(this)
-
 
                 TemplateApp(
                     viewModel = viewModel,
