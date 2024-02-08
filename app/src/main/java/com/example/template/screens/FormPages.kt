@@ -1,4 +1,5 @@
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -7,14 +8,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.ArrowLeft
-import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -26,7 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -42,54 +43,40 @@ fun Testing() {
         .padding(16.dp)
     ) {
         FirstPage()
-        Spacer(modifier = Modifier.height(12.dp))
         SecondPage()
     }
 }
 
 @Composable
 fun FirstPage() {
-    Spacer(modifier = Modifier.height(24.dp))
-
-    // Rows with labels
+    MyBigText(text = "Info")
     LabeledRows()
+    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
 
-    Spacer(modifier = Modifier.height(12.dp))
 
-    // Larger text label
     MyBigText(text = "Radno Vreme")
-
     Spacer(modifier = Modifier.height(12.dp))
-
-    TimeSelectionRows()
+    DropdownTabsTimeInput()
+    HorizontalLineSpacer(modifier = Modifier.padding(top = 24.dp))
 }
 
 @Composable
 fun SecondPage() {
 
-    Column() {
+    MyBigText(text = "Info")
+    LabeledRow(label = "Investitor" , value = "AD Aerodrop Nikola Tesla Beorad")
+    LabeledRow(label = "Adresa" , value = "11180 Beograd 59")
 
-        // Rows with labels
-        LabeledRow(label = "Investitor" , value = "AD Aerodrop Nikola Tesla Beorad")
-        LabeledRow(label = "Adresa" , value = "11180 Beograd 59")
+    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
 
+    MyBigText(text = "Broj Radnika")
+    Spacer(modifier = Modifier.height(12.dp))
+    DropdownTabsNumberInput()
 
-        DropdownTabs()
+    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
 
-
-        Spacer(modifier = Modifier.height(12.dp))
-    }
 }
 
-@Composable
-fun MyBigText(text: String) {
-    Text(
-        text = text,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Medium,
-        modifier = Modifier.padding(top = 8.dp)
-    )
-}
 @Composable
 fun LabeledRows() {
     Column {
@@ -129,17 +116,17 @@ fun LabeledRow(label: String, value: String) {
     }
 }
 
-@Composable
-fun TimeSelectionRows() {
-    Column {
-        TimeSelectionRow("I  ")
-        TimeSelectionRow("II ")
-        TimeSelectionRow("III")
-    }
-}
+//@Composable
+//fun TimeSelectionRows() {
+//    Column {
+//        TimeSelectionRow("I  ")
+//        TimeSelectionRow("II ")
+//        TimeSelectionRow("III")
+//    }
+//}
 
 @Composable
-fun TimeSelectionRow(smena: String) {
+fun TimeSelectionRow() {
     var fromTime by remember { mutableStateOf(LocalTime.now().withMinute(0).withSecond(0).withNano(0)) }
     var toTime by remember { mutableStateOf(LocalTime.now().withMinute(0).withSecond(0).withNano(0).plusHours(1)) }
     var ukupnoSatiValue by remember { mutableStateOf("") }
@@ -147,7 +134,7 @@ fun TimeSelectionRow(smena: String) {
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
-        Text(text = smena)
+//        Text(text = smena)
         Spacer(modifier = Modifier.width(8.dp))
 
         Button(onClick = {
@@ -262,15 +249,49 @@ fun NumberInputLayout() {
 }
 
 @Composable
-fun DropdownTabs() {
-    var expandedTab by remember { mutableStateOf(0) } // 0 means the first tab is expanded by default
+fun DropdownTabsTimeInput() {
+    var expandedTab by remember { mutableStateOf<Int?>(0) } // Initially, the first tab is expanded. Use null for no tab expanded.
 
     Column() {
         // Tab 1
         DropdownTab(
             title = "I Smena",
             expanded = expandedTab == 0,
-            onTabClick = { expandedTab = 0 }
+            onTabClick = { expandedTab = if (expandedTab == 0) null else 0 }
+        ) {
+            TimeSelectionRow()
+        }
+
+        // Tab 2
+        DropdownTab(
+            title = "II Smena",
+            expanded = expandedTab == 1,
+            onTabClick = { expandedTab = if (expandedTab == 1) null else 1 }
+        ) {
+            TimeSelectionRow()
+        }
+
+        // Tab 3
+        DropdownTab(
+            title = "III Smena",
+            expanded = expandedTab == 2,
+            onTabClick = { expandedTab = if (expandedTab == 2) null else 2 }
+        ) {
+            TimeSelectionRow()
+        }
+    }
+}
+
+@Composable
+fun DropdownTabsNumberInput() {
+    var expandedTab by remember { mutableStateOf<Int?>(0) } // Initially, the first tab is expanded. Use null for no tab expanded.
+
+    Column() {
+        // Tab 1
+        DropdownTab(
+            title = "I Smena",
+            expanded = expandedTab == 0,
+            onTabClick = { expandedTab = if (expandedTab == 0) null else 0 }
         ) {
             NumberInputLayout()
         }
@@ -279,7 +300,7 @@ fun DropdownTabs() {
         DropdownTab(
             title = "II Smena",
             expanded = expandedTab == 1,
-            onTabClick = { expandedTab = 1 }
+            onTabClick = { expandedTab = if (expandedTab == 1) null else 1 }
         ) {
             NumberInputLayout()
         }
@@ -288,7 +309,7 @@ fun DropdownTabs() {
         DropdownTab(
             title = "III Smena",
             expanded = expandedTab == 2,
-            onTabClick = { expandedTab = 2 }
+            onTabClick = { expandedTab = if (expandedTab == 2) null else 2 }
         ) {
             NumberInputLayout()
         }
@@ -297,27 +318,89 @@ fun DropdownTabs() {
 
 @Composable
 fun DropdownTab(title: String, expanded: Boolean, onTabClick: () -> Unit, content: @Composable () -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    val elevation = if (expanded) 8.dp else 2.dp
+
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .clickable { onTabClick() }
-            .padding(10.dp)
+            .padding(vertical = 4.dp)
+            .shadow(elevation, RoundedCornerShape(8.dp)), // Apply shadow for elevation effect
+        shape = RoundedCornerShape(8.dp)
     ) {
-        Text(text = title, modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = if (expanded) Icons.Filled.ArrowLeft else Icons.Filled.ArrowRight,
-            contentDescription = if (expanded) "Collapse" else "Expand",
-            tint = MaterialTheme.colorScheme.onSecondaryContainer
-        )
-    }
+        Column(modifier = Modifier.clickable { onTabClick() }) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = title,
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Icon(
+                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = if (expanded) "Collapse" else "Expand"
+                )
+            }
 
-    AnimatedVisibility(
-        visible = expanded,
-        enter = expandVertically() + fadeIn(),
-        exit = shrinkVertically() + fadeOut()
-    ) {
-        content()
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                Column(Modifier.padding(horizontal = 12.dp)) {
+                    content()
+
+                }
+            }
+        }
     }
+}
+
+//@Composable
+//fun DropdownTab(title: String, expanded: Boolean, onTabClick: () -> Unit, content: @Composable () -> Unit) {
+//    Row(
+//        verticalAlignment = Alignment.CenterVertically,
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .background(MaterialTheme.colorScheme.primaryContainer)
+//            .clickable { onTabClick() }
+//            .padding(10.dp)
+//    ) {
+//        Text(text = title, modifier = Modifier.weight(1f))
+//        Icon(
+//            imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+//            contentDescription = if (expanded) "Collapse" else "Expand",
+//            tint = MaterialTheme.colorScheme.onSecondaryContainer
+//        )
+//    }
+//
+//    AnimatedVisibility(
+//        visible = expanded,
+//        enter = expandVertically() + fadeIn(),
+//        exit = shrinkVertically() + fadeOut()
+//    ) {
+//        content()
+//    }
+//}
+
+@Composable
+fun MyBigText(text: String) {
+    Text(
+        text = text,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Medium,
+        modifier = Modifier.padding(top = 8.dp)
+    )
+}
+
+@Composable
+fun HorizontalLineSpacer(modifier: Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth() // Fill the maximum width available
+            .height(1.dp) // Set the height to 1dp to create a thin line
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)) // Use a semi-transparent color for the line
+    )
 }
