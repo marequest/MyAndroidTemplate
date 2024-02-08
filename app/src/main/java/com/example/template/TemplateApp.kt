@@ -1,5 +1,7 @@
 package com.example.template
 
+import FirstPage
+import Testing
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -276,7 +278,7 @@ fun TemplateNavHost(
             EmptyComingSoon()
         }
         composable(NavDestinations.GROUPS) {
-            ConstructionJournalForm()
+            Testing()
         }
     }
 }
