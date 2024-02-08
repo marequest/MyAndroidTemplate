@@ -1,3 +1,11 @@
+import android.app.DatePickerDialog
+import android.content.Context
+import android.content.Intent
+import android.widget.DatePicker
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandVertically
@@ -7,6 +15,8 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,44 +26,111 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Calendar
+import java.util.Locale
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import java.time.DayOfWeek
+import java.time.format.TextStyle
+import java.util.*
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.window.DialogProperties
+import java.text.DateFormatSymbols
 
 
 @Composable
 fun Testing() {
-    Column(modifier = Modifier
-        .verticalScroll(rememberScrollState())
-        .padding(16.dp)
-    ) {
-        FirstPage()
-        SecondPage()
+//    Column(modifier = Modifier
+//        .verticalScroll(rememberScrollState())
+//        .padding(16.dp)
+//    ) {
+//        FirstPage()
+//        SecondPage()
+//        ThirdPage()
+//}
+    Scaffold(
+        floatingActionButton = { InfoFABWithDialog() }
+    ) { innerPadding ->
+        Column(modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+            .padding(innerPadding)) {
+            FirstPage()
+            SecondPage()
+            ThirdPage()
+        }
     }
 }
 
 @Composable
+fun InfoFABWithDialog() {
+    var showDialog by remember { mutableStateOf(false) }
+
+    // Floating Action Button with Info Icon
+    FloatingActionButton(onClick = { showDialog = true }) {
+        Icon(Icons.Filled.Info, contentDescription = "Info")
+    }
+
+    // Dialog
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("U redu")
+                }
+            },
+            title = { Text("Informacije") },
+            text = {
+                // Your component inside the dialog
+                LabeledRows()
+            },
+            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+        )
+    }
+}
+
+
+@Composable
 fun FirstPage() {
-    MyBigText(text = "Info")
-    LabeledRows()
-    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
-
-
     MyBigText(text = "Radno Vreme")
     Spacer(modifier = Modifier.height(12.dp))
     DropdownTabsTimeInput()
@@ -62,19 +139,121 @@ fun FirstPage() {
 
 @Composable
 fun SecondPage() {
-
-    MyBigText(text = "Info")
-    LabeledRow(label = "Investitor" , value = "AD Aerodrop Nikola Tesla Beorad")
-    LabeledRow(label = "Adresa" , value = "11180 Beograd 59")
-
-    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
-
     MyBigText(text = "Broj Radnika")
     Spacer(modifier = Modifier.height(12.dp))
     DropdownTabsNumberInput()
-
     HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
+}
 
+@Composable
+fun ThirdPage() {
+
+    MyBigText(text = "Gradjevinski Dnevnik")
+    Spacer(modifier = Modifier.height(12.dp))
+    DateAndDaySelector()
+
+}
+
+@Composable
+fun DateAndDaySelector() {
+
+    DaySelector()
+    Spacer(modifier = Modifier.height(16.dp))
+    DateChooser()
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DaySelector() {
+    val calendar = Calendar.getInstance()
+    val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+    val daysOfWeek = DateFormatSymbols().weekdays.filter { it.isNotEmpty() }
+    var expanded by remember { mutableStateOf(false) }
+    var selectedDay by remember { mutableStateOf(daysOfWeek[currentDayOfWeek - 1]) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    expanded = !expanded
+                    println("Dropdown clicked, expanded: $expanded")
+                }
+        ) {
+            TextField(
+                readOnly = true,
+                value = selectedDay,
+                onValueChange = { },
+                label = { Text("Select Day") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            daysOfWeek.forEach { day ->
+                DropdownMenuItem(
+                    text = {Text(text = day)},
+                    onClick = {
+                        selectedDay = day
+                        expanded = false
+                        println("Item clicked: $day")
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DateChooser() {
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    val context = LocalContext.current
+
+    // Button to trigger dialog
+    Button(onClick = { showDialog = true }) {
+        Text("Datum: ${selectedDate.toString()}")
+    }
+
+    // Show dialog
+    if (showDialog) {
+        val onDateSetListener = DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+            selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
+            showDialog = false
+        }
+
+        val datePickerDialog = DatePickerDialog(
+            context,
+            onDateSetListener,
+            selectedDate.year,
+            selectedDate.monthValue - 1,
+            selectedDate.dayOfMonth
+        )
+
+        // Prevent dialog from being dismissed on outside touch
+        datePickerDialog.setCancelable(false)
+
+        // Show the DatePickerDialog
+        LaunchedEffect(Unit) {
+            datePickerDialog.show()
+        }
+
+        // Dismiss the dialog when showDialog becomes false
+        DisposableEffect(Unit) {
+            onDispose {
+                datePickerDialog.dismiss()
+            }
+        }
+    }
 }
 
 @Composable
@@ -83,6 +262,8 @@ fun LabeledRows() {
         LabeledRow(label = "Izvodjac radova", value = "Serbia projekt inzenjering doo")
         LabeledRow(label = "Objekat", value = "Izgradnja i rekonstrukcija poletno sletnih staza")
         LabeledRow(label = "Mesto", value = "Surcin")
+        LabeledRow(label = "Investitor" , value = "AD Aerodrop Nikola Tesla Beorad")
+        LabeledRow(label = "Adresa" , value = "11180 Beograd 59")
     }
 }
 
@@ -95,35 +276,27 @@ fun LabeledRow(label: String, value: String) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-//        Text(
-//            text = label,
-//            fontWeight = FontWeight.Bold,
-//            fontSize = 16.sp,
-//            modifier = Modifier.weight(0.8f) // Allocates space based on weight, pushing the label to the left
-//        )
-//        Text(
-//            text = value,
-//            fontWeight = FontWeight.Normal,
-//            fontSize = 16.sp,
-//            modifier = Modifier.weight(1.2f) // Ensures the value starts from the same position across all rows
-//        )
-        OutlinedTextField(
-            value = textBoxValue,
-            onValueChange = { textBoxValue = it },
-            label = {Text(label)},
-            modifier = Modifier.weight(1f)
+        Text(
+            text = label,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            modifier = Modifier.weight(0.7f) // Allocates space based on weight, pushing the label to the left
         )
+        Text(
+            text = value,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            modifier = Modifier.weight(1.3f) // Ensures the value starts from the same position across all rows
+        )
+//        OutlinedTextField(
+//            value = textBoxValue,
+//            enabled = false,
+//            onValueChange = { textBoxValue = it },
+//            label = {Text(label)},
+//            modifier = Modifier.weight(1f)
+//        )
     }
 }
-
-//@Composable
-//fun TimeSelectionRows() {
-//    Column {
-//        TimeSelectionRow("I  ")
-//        TimeSelectionRow("II ")
-//        TimeSelectionRow("III")
-//    }
-//}
 
 @Composable
 fun TimeSelectionRow() {
