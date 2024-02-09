@@ -7,7 +7,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -59,7 +61,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -72,34 +80,100 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.DialogProperties
-import com.example.template.screens.elements.InfoFABWithDialog
+import com.example.template.screens.TabContent
+import com.example.template.screens.elements.DateChooser
+import com.example.template.screens.elements.DaySelector
+import com.example.template.screens.elements.DropdownTab
+import com.example.template.screens.elements.HorizontalLineSpacer
+import com.example.template.screens.elements.LabeledRow
+import com.example.template.screens.elements.MyBigText
+import com.example.template.screens.elements.TimeSelectionRow
+import kotlinx.coroutines.launch
 import java.text.DateFormatSymbols
 
 
 @Composable
 fun Testing() {
-//    Column(modifier = Modifier
-//        .verticalScroll(rememberScrollState())
-//        .padding(16.dp)
-//    ) {
-//        FirstPage()
-//        SecondPage()
-//        ThirdPage()
-//}
+
     Scaffold(
         floatingActionButton = { InfoFABWithDialog() }
     ) { innerPadding ->
         Column(modifier = Modifier
-            .verticalScroll(rememberScrollState())
             .padding(16.dp)
             .padding(innerPadding)
         ) {
             MyBigText(text = "Gradjevinski Dnevnik")
             HorizontalLineSpacer(modifier = Modifier.padding(top = 8.dp))
-            ThirdPage()
-            FirstPage()
-            SecondPage()
+            TabScreenWithProgress()
+//            ThirdPage()
+//            FirstPage()
+//            SecondPage()
+        }
+    }
+}
+
+@Composable
+fun TabScreenWithProgress() {
+    var selectedTabIndex by remember { mutableStateOf(0) }
+    val tabs = listOf("Tab 1", "Tab 2", "Tab 3")
+    val tabIcons = listOf(Icons.Filled.DateRange, Icons.Filled.AccessTime, Icons.Filled.People)
+
+    val animatedProgress = remember { Animatable(0f) }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(selectedTabIndex) {
+        coroutineScope.launch {
+            animatedProgress.animateTo(
+                targetValue = (selectedTabIndex + 1) / tabs.size.toFloat(),
+                animationSpec = tween(durationMillis = 600)
+            )
+        }
+    }
+
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            indicator = { }, // Empty indicator
+            contentColor = Color.Black
+        ) {
+            tabs.forEachIndexed { index, text ->
+                Tab(
+                    icon = { Icon(tabIcons[index], contentDescription = null) },
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index }
+                )
+            }
+        }
+
+        // Progress bar that spans from left to right based on the selected tab
+        LinearProgressIndicator(
+            progress = animatedProgress.value,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp),
+            color = MaterialTheme.colorScheme.secondary
+        )
+
+        // Content for each tab
+        Column(modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+        ) {
+            when (selectedTabIndex) {
+                0 -> {
+                        ThirdPage()
+                }
+                1 -> {
+                        FirstPage()
+                }
+                2 -> {
+                        SecondPage()
+                }
+            }
         }
     }
 }
@@ -128,7 +202,6 @@ fun ThirdPage() {
     DateAndDaySelector()
     HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
 
-
 }
 
 @Composable
@@ -140,97 +213,6 @@ fun DateAndDaySelector() {
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DaySelector() {
-    val calendar = Calendar.getInstance()
-    // Adjust the index to make the week start from Monday
-    val currentDayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) + 5) % 7
-    val daysOfWeekEnglish = DateFormatSymbols().weekdays
-        .toList()
-        .filter { it.isNotEmpty() }
-        .let { it.drop(1) + it.first() } // Move Sunday to the end
-
-    val daysOfWeekSerbian = listOf("Ponedeljak", "Utorak", "Sreda", "Cetvrtak", "Petak", "Subota", "Nedelja")
-
-    var expanded by remember { mutableStateOf(false) }
-    // Use the Serbian name for the initially selected day
-    var selectedDay by remember { mutableStateOf(daysOfWeekSerbian[currentDayOfWeek]) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
-        TextField(
-            readOnly = true,
-            value = "$selectedDay",
-            onValueChange = { },
-            label = { Text("Dan") },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-            modifier = Modifier.fillMaxWidth().menuAnchor()
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            daysOfWeekSerbian.forEachIndexed { index, day ->
-                DropdownMenuItem(
-                    text = { Text(text = day) }, // Text(text = "${daysOfWeekEnglish[index]} - $day")
-                    onClick = {
-                        selectedDay = day
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun DateChooser() {
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    val context = LocalContext.current
-
-    // Button to trigger dialog
-    Button(onClick = { showDialog = true }) {
-        Text("Datum: ${selectedDate.toString()}")
-    }
-
-    // Show dialog
-    if (showDialog) {
-        val onDateSetListener = DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-            selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
-            showDialog = false
-        }
-
-        val datePickerDialog = DatePickerDialog(
-            context,
-            onDateSetListener,
-            selectedDate.year,
-            selectedDate.monthValue - 1,
-            selectedDate.dayOfMonth
-        )
-
-        // Prevent dialog from being dismissed on outside touch
-        datePickerDialog.setCancelable(false)
-
-        // Show the DatePickerDialog
-        LaunchedEffect(Unit) {
-            datePickerDialog.show()
-        }
-
-        // Dismiss the dialog when showDialog becomes false
-        DisposableEffect(Unit) {
-            onDispose {
-                datePickerDialog.dismiss()
-            }
-        }
-    }
-}
-
 @Composable
 fun LabeledRows() {
     Column {
@@ -239,71 +221,6 @@ fun LabeledRows() {
         LabeledRow(label = "Mesto", value = "Surcin")
         LabeledRow(label = "Investitor" , value = "AD Aerodrop Nikola Tesla Beorad")
         LabeledRow(label = "Adresa" , value = "11180 Beograd 59")
-    }
-}
-
-@Composable
-fun LabeledRow(label: String, value: String) {
-    var textBoxValue by remember { mutableStateOf(value) }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    ) {
-        Text(
-            text = label,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            modifier = Modifier.weight(0.7f) // Allocates space based on weight, pushing the label to the left
-        )
-        Text(
-            text = value,
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp,
-            modifier = Modifier.weight(1.3f) // Ensures the value starts from the same position across all rows
-        )
-//        OutlinedTextField(
-//            value = textBoxValue,
-//            enabled = false,
-//            onValueChange = { textBoxValue = it },
-//            label = {Text(label)},
-//            modifier = Modifier.weight(1f)
-//        )
-    }
-}
-
-@Composable
-fun TimeSelectionRow() {
-    var fromTime by remember { mutableStateOf(LocalTime.now().withMinute(0).withSecond(0).withNano(0)) }
-    var toTime by remember { mutableStateOf(LocalTime.now().withMinute(0).withSecond(0).withNano(0).plusHours(1)) }
-    var ukupnoSatiValue by remember { mutableStateOf("") }
-
-    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
-//        Text(text = smena)
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Button(onClick = {
-            // Trigger TimePickerDialog for 'From' time
-        }) {
-            Text(text = "Od: ${fromTime.format(timeFormatter)}")
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        Button(onClick = {
-            // Trigger TimePickerDialog for 'To' time
-        }) {
-            Text(text = "Do: ${toTime.format(timeFormatter)}")
-        }
-        Spacer(modifier = Modifier.width(12.dp))
-
-        OutlinedTextField(
-            value = ukupnoSatiValue,
-            onValueChange = { ukupnoSatiValue = it },
-            label = { Text("Ukupno") },
-            modifier = Modifier.weight(1f)
-        )
     }
 }
 
@@ -465,63 +382,29 @@ fun DropdownTabsNumberInput() {
 }
 
 @Composable
-fun DropdownTab(title: String, expanded: Boolean, onTabClick: () -> Unit, content: @Composable () -> Unit) {
-    val elevation = if (expanded) 8.dp else 2.dp
+fun InfoFABWithDialog() {
+    var showDialog by remember { mutableStateOf(false) }
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .shadow(elevation, RoundedCornerShape(8.dp)), // Apply shadow for elevation effect
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Column(modifier = Modifier.clickable { onTabClick() }) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = title,
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Icon(
-                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = if (expanded) "Collapse" else "Expand"
-                )
-            }
-
-            AnimatedVisibility(
-                visible = expanded,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
-            ) {
-                Column(Modifier.padding(horizontal = 12.dp)) {
-                    content()
-
-                }
-            }
-        }
+    // Floating Action Button with Info Icon
+    FloatingActionButton(onClick = { showDialog = true }) {
+        Icon(Icons.Filled.Info, contentDescription = "Info")
     }
-}
 
-@Composable
-fun MyBigText(text: String) {
-    Text(
-        text = text,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Medium,
-        modifier = Modifier.padding(top = 8.dp)
-    )
-}
-
-@Composable
-fun HorizontalLineSpacer(modifier: Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth() // Fill the maximum width available
-            .height(1.dp) // Set the height to 1dp to create a thin line
-            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)) // Use a semi-transparent color for the line
-    )
+    // Dialog
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("U redu")
+                }
+            },
+            title = { Text("Informacije") },
+            text = {
+                // Your component inside the dialog
+                LabeledRows()
+            },
+            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+        )
+    }
 }

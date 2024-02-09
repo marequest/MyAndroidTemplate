@@ -40,6 +40,7 @@ import com.example.template.screens.ConstructionJournalForm
 import com.example.template.screens.EmptyComingSoon
 import com.example.template.screens.HomeScreen
 import com.example.template.screens.LoginScreen
+import com.example.template.screens.TabScreenWithProgress
 import com.example.template.utils.ContentType
 import com.example.template.utils.DevicePosture
 import com.example.template.utils.NavigationType
@@ -275,7 +276,7 @@ fun TemplateNavHost(
 //            }
         }
         composable(NavDestinations.ARTICLES) {
-            EmptyComingSoon()
+            TabScreenWithProgress()
         }
         composable(NavDestinations.GROUPS) {
             Testing()
