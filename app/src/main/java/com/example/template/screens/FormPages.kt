@@ -73,6 +73,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.DialogProperties
+import com.example.template.screens.elements.InfoFABWithDialog
 import java.text.DateFormatSymbols
 
 
@@ -92,39 +93,14 @@ fun Testing() {
         Column(modifier = Modifier
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
-            .padding(innerPadding)) {
+            .padding(innerPadding)
+        ) {
+            MyBigText(text = "Gradjevinski Dnevnik")
+            HorizontalLineSpacer(modifier = Modifier.padding(top = 8.dp))
+            ThirdPage()
             FirstPage()
             SecondPage()
-            ThirdPage()
         }
-    }
-}
-
-@Composable
-fun InfoFABWithDialog() {
-    var showDialog by remember { mutableStateOf(false) }
-
-    // Floating Action Button with Info Icon
-    FloatingActionButton(onClick = { showDialog = true }) {
-        Icon(Icons.Filled.Info, contentDescription = "Info")
-    }
-
-    // Dialog
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            confirmButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text("U redu")
-                }
-            },
-            title = { Text("Informacije") },
-            text = {
-                // Your component inside the dialog
-                LabeledRows()
-            },
-            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
-        )
     }
 }
 
@@ -148,9 +124,10 @@ fun SecondPage() {
 @Composable
 fun ThirdPage() {
 
-    MyBigText(text = "Gradjevinski Dnevnik")
     Spacer(modifier = Modifier.height(12.dp))
     DateAndDaySelector()
+    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
+
 
 }
 
@@ -167,45 +144,43 @@ fun DateAndDaySelector() {
 @Composable
 fun DaySelector() {
     val calendar = Calendar.getInstance()
-    val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-    val daysOfWeek = DateFormatSymbols().weekdays.filter { it.isNotEmpty() }
+    // Adjust the index to make the week start from Monday
+    val currentDayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) + 5) % 7
+    val daysOfWeekEnglish = DateFormatSymbols().weekdays
+        .toList()
+        .filter { it.isNotEmpty() }
+        .let { it.drop(1) + it.first() } // Move Sunday to the end
+
+    val daysOfWeekSerbian = listOf("Ponedeljak", "Utorak", "Sreda", "Cetvrtak", "Petak", "Subota", "Nedelja")
+
     var expanded by remember { mutableStateOf(false) }
-    var selectedDay by remember { mutableStateOf(daysOfWeek[currentDayOfWeek - 1]) }
+    // Use the Serbian name for the initially selected day
+    var selectedDay by remember { mutableStateOf(daysOfWeekSerbian[currentDayOfWeek]) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = it }
+        onExpandedChange = { expanded = !expanded }
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    expanded = !expanded
-                    println("Dropdown clicked, expanded: $expanded")
-                }
-        ) {
-            TextField(
-                readOnly = true,
-                value = selectedDay,
-                onValueChange = { },
-                label = { Text("Select Day") },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        TextField(
+            readOnly = true,
+            value = "$selectedDay",
+            onValueChange = { },
+            label = { Text("Dan") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier.fillMaxWidth().menuAnchor()
+        )
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            daysOfWeek.forEach { day ->
+            daysOfWeekSerbian.forEachIndexed { index, day ->
                 DropdownMenuItem(
-                    text = {Text(text = day)},
+                    text = { Text(text = day) }, // Text(text = "${daysOfWeekEnglish[index]} - $day")
                     onClick = {
                         selectedDay = day
                         expanded = false
-                        println("Item clicked: $day")
                     }
                 )
             }
@@ -530,33 +505,6 @@ fun DropdownTab(title: String, expanded: Boolean, onTabClick: () -> Unit, conten
         }
     }
 }
-
-//@Composable
-//fun DropdownTab(title: String, expanded: Boolean, onTabClick: () -> Unit, content: @Composable () -> Unit) {
-//    Row(
-//        verticalAlignment = Alignment.CenterVertically,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(MaterialTheme.colorScheme.primaryContainer)
-//            .clickable { onTabClick() }
-//            .padding(10.dp)
-//    ) {
-//        Text(text = title, modifier = Modifier.weight(1f))
-//        Icon(
-//            imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-//            contentDescription = if (expanded) "Collapse" else "Expand",
-//            tint = MaterialTheme.colorScheme.onSecondaryContainer
-//        )
-//    }
-//
-//    AnimatedVisibility(
-//        visible = expanded,
-//        enter = expandVertically() + fadeIn(),
-//        exit = shrinkVertically() + fadeOut()
-//    ) {
-//        content()
-//    }
-//}
 
 @Composable
 fun MyBigText(text: String) {
