@@ -2,6 +2,7 @@ import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -30,6 +31,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Print
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,6 +39,8 @@ import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.example.template.screens.elements.DateChooser
 import com.example.template.screens.elements.DaySelector
@@ -49,10 +53,13 @@ import com.example.template.screens.elements.LargePrimedbeTextField
 import com.example.template.screens.elements.MyHeaderText
 import com.example.template.screens.elements.NumberInputLayout
 import com.example.template.screens.elements.SaveButton
+import com.example.template.screens.elements.Stampaj
 import com.example.template.screens.elements.TimeSelectionRow
 import com.example.template.screens.elements.TimeTemperatureRow
 import com.example.template.screens.elements.TripleInputRow
 import kotlinx.coroutines.launch
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,8 +70,9 @@ fun Testing() {
     val context = LocalContext.current
 
     Scaffold(
+        topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior, "Gradjevinski Dnevnik") },
         floatingActionButton = {
-            Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.padding(16.dp)) {
+            Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.padding(0.dp)) {
                 Column(horizontalAlignment = Alignment.End) {
                     InfoFABWithDialog()
                     Spacer(modifier = Modifier.padding(8.dp))
@@ -86,23 +94,21 @@ fun Testing() {
                         elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
                     ) {
                         if (selectedTabIndex == 2){
-                            Icon(Icons.Filled.Check, "Sledeca Stranica")
+                            Icon(Icons.Filled.Save, "Sacuvaj")
                         } else {
-                            Icon(Icons.Filled.NavigateNext, "Sacuvaj")
+                            Icon(Icons.Filled.NavigateNext, "Sledeca Stranica")
 
                         }
                     }
                 }
             }
         },
-        topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior, "Gradjevinski Dnevnik") },
-//        bottomBar = {
-//            BottomAppBar(
-//                actions = {
-//                    InfoFABWithDialog()
-//                },
-//            )
-//        }
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.height(0.dp)
+            ) {
+            }
+        }
     ) { innerPadding ->
         Column(modifier = Modifier
             .padding(start = 16.dp, end = 16.dp)
@@ -118,15 +124,20 @@ fun Testing() {
 fun SimpleTopAppBar(scrollBehavior: TopAppBarScrollBehavior, text: String) {
 
     TopAppBar(
-        title = { Text(text) },
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        title = { Text(
+            text = text,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.W800,
+            color = Color.White,
+            modifier = Modifier.padding(vertical = 8.dp)
+        ) },
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
         scrollBehavior = scrollBehavior,
     )
 }
 
 @Composable
 fun TabScreenWithProgress(selectedTabIndex: Int, changeSelectedIndex: (Int) -> Unit) {
-//    var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("Korak 1", "Korak 2", "Korak 3")
     val tabIcons = listOf(Icons.Filled.DateRange, Icons.Filled.AccessTime, Icons.Filled.People)
 
@@ -159,16 +170,14 @@ fun TabScreenWithProgress(selectedTabIndex: Int, changeSelectedIndex: (Int) -> U
             }
         }
 
-        // Progress bar that spans from left to right based on the selected tab
         LinearProgressIndicator(
             progress = animatedProgress.value,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(4.dp),
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.primary
         )
 
-        // Content for each tab
         Column(modifier = Modifier
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
@@ -203,7 +212,7 @@ fun FirstPage() {
 @Composable
 fun SecondPage() {
     DateAndDaySelector()
-//    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
+    HorizontalLineSpacer(modifier = Modifier.padding(top = 8.dp))
     TimeTemperatureRows()
 //    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
     TripleInputRows()
@@ -212,33 +221,25 @@ fun SecondPage() {
 @Composable
 fun ThirdPage() {
     LargeDescriptionTextField()
+    Spacer(modifier = Modifier.padding(4.dp))
     LargePrimedbeTextField()
 //    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
     FilePicker()
 //    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
+
     MyHeaderText(text = "Informacije")
     LabeledRow(label = "Vode Dnevnik", value = "")
     LabeledRow(label = "Izvodjac Radova", value = "Potpis")
     LabeledRow(label = "Nadzorni Organ", value = "")
 
     Spacer(modifier = Modifier.height(16.dp))
-    Stampaj()
-
-    SaveButton()
-}
-
-@Composable
-fun Stampaj() {
-    OutlinedButton(
-        onClick = {
-            // Add your save action here
-        },
-        border = BorderStroke(1.dp, Color.Blue),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Blue),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Icon(imageVector = Icons.Filled.Print, contentDescription = "Stampaj")
-        Text(" Stampaj")
+    Row {
+        Column(Modifier.weight(1f)) {
+            Stampaj()
+        }
+        Column(Modifier.weight(1f)) {
+            SaveButton()
+        }
     }
 }
 
@@ -257,15 +258,11 @@ fun TripleInputRows() {
     TripleInputRow(text = "nivo podzemnih voda")
 }
 
-
-
 @Composable
 fun DateAndDaySelector() {
-
     DaySelector()
     Spacer(modifier = Modifier.height(16.dp))
     DateChooser()
-
 }
 
 @Composable

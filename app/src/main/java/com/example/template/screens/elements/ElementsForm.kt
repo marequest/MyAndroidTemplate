@@ -1,5 +1,6 @@
 package com.example.template.screens.elements
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -8,8 +9,10 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,16 +28,26 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Print
+import androidx.compose.material.icons.filled.UploadFile
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,14 +55,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.log
 
 @Composable
 fun LabeledRow(label: String, value: String) {
@@ -86,14 +101,18 @@ fun MyHeaderText(text: String) {
 
 @Composable
 fun DropdownTab(title: String, expanded: Boolean, onTabClick: () -> Unit, content: @Composable () -> Unit) {
-    val elevation = if (expanded) 8.dp else 2.dp
+    val elevation = if (expanded) 8.dp else 3.dp
 
     Card(
+//        border = BorderStroke(1.dp, Color.Black),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background,
+        ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(4.dp)
             .shadow(elevation, RoundedCornerShape(8.dp)), // Apply shadow for elevation effect
-        shape = RoundedCornerShape(0.dp)
+        shape = RoundedCornerShape(8.dp)
     ) {
         Column(modifier = Modifier.clickable { onTabClick() }) {
             Row(
@@ -136,52 +155,89 @@ fun HorizontalLineSpacer(modifier: Modifier) {
     )
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun TimeSelectionRow() {
-    var fromTime by remember { mutableStateOf(LocalTime.now().withMinute(0).withSecond(0).withNano(0)) }
-    var toTime by remember { mutableStateOf(LocalTime.now().withMinute(0).withSecond(0).withNano(0).plusHours(1)) }
-    var ukupnoSatiValue by remember { mutableStateOf("8") }
+    var prviMinut by remember { mutableStateOf(LocalTime.now().hour * 60 + LocalTime.now().minute) }
+    var drugiMinut by remember { mutableStateOf(LocalTime.now().hour * 60 + LocalTime.now().minute) }
 
-    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    // Observe changes in prviMinut and drugiMinut and update ukupnoSatiValue accordingly
+    val ukupnoSatiValue by derivedStateOf {
+        println("prvi minut: $prviMinut")
+        println("drugi minut: $drugiMinut")
+
+        if(prviMinut > drugiMinut){
+            ceil(abs(prviMinut - drugiMinut - 24*60) / 60.0).toInt().toString()
+        } else {
+            ceil(abs(drugiMinut - prviMinut) / 60.0).toInt().toString()
+        }
+    }
 
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(0.dp)) {
-//        Text(text = smena)
         Spacer(modifier = Modifier.width(8.dp))
-
-        Button(onClick = {
-            // Trigger TimePickerDialog for 'From' time
-        }) {
-            Text(text = "Od: ${fromTime.format(timeFormatter)}")
-        }
+        // Assume TimePickerTextField is a custom composable that takes a callback
+        // This is a placeholder for your actual TimePickerTextField implementation
+        TimePickerTextField { newValue -> prviMinut = newValue }
         Spacer(modifier = Modifier.width(8.dp))
-        Button(onClick = {
-            // Trigger TimePickerDialog for 'To' time
-        }) {
-            Text(text = "Do: ${toTime.format(timeFormatter)}")
-        }
+        TimePickerTextField { newValue -> drugiMinut = newValue }
         Spacer(modifier = Modifier.width(12.dp))
 
         OutlinedTextField(
             value = ukupnoSatiValue,
-            onValueChange = { newValue ->
-                if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
-                    ukupnoSatiValue = newValue
-                }
-            },
+            onValueChange = {},
             enabled = false,
             label = { Text("Ukupno") },
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             modifier = Modifier
-                .weight(1f) // Each TextField takes up equal space
+                .weight(1f)
+                .padding(bottom = 8.dp)
         )
     }
 }
 
+
+//@Composable
+//fun TimeSelectionRow() {
+////    var fromTime by remember { mutableStateOf(LocalTime.now().withMinute(0).withSecond(0).withNano(0)) }
+////    var toTime by remember { mutableStateOf(LocalTime.now().withMinute(0).withSecond(0).withNano(0).plusHours(1)) }
+//    var ukupnoSatiValue by remember { mutableStateOf(0) }
+//    var prviMinut = 0
+//    var drugiMinut = 0
+////    ukupnoSatiValue = ceil(abs(drugiMinut - prviMinut) / 60.0).toInt()
+////    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+//
+//    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(0.dp)) {
+////        Text(text = smena)
+//        Spacer(modifier = Modifier.width(8.dp))
+//        TimePickerTextField() { prviMinut = it }
+//        Spacer(modifier = Modifier.width(8.dp))
+//        TimePickerTextField() { drugiMinut = it }
+//        Spacer(modifier = Modifier.width(12.dp))
+//
+//        OutlinedTextField(
+//            value = (ceil(abs(drugiMinut - prviMinut) / 60.0).toInt()).toString(),
+//            onValueChange = { newValue ->
+//                if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
+//                    ukupnoSatiValue = newValue.toInt()
+//                }
+//            },
+//            enabled = false,
+//            label = { Text("Ukupno") },
+//            singleLine = true,
+//            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+//            modifier = Modifier
+//                .weight(1f)
+//                .padding(bottom = 8.dp)
+//        )
+//    }
+//}
+
 @Composable
 fun TimeTemperatureRow(index: Int) {
-    var time by remember { mutableStateOf(LocalTime.now()) }
+//    var time by remember { mutableStateOf(LocalTime.now()) }
     var temperature by remember { mutableStateOf("") }
+//    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -189,17 +245,8 @@ fun TimeTemperatureRow(index: Int) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        // Button to show and update time
-        Button(
-            onClick = {
-                // Trigger TimePickerDialog for 'From' time
-            },
-            modifier = Modifier.padding(end = 8.dp)
-        ) {
-            Text(text = time.format(DateTimeFormatter.ofPattern("HH:mm")))
-        }
+        TimePickerTextField() {it1 -> {} }
 
-        // Outlined text field for temperature input
         OutlinedTextField(
             value = temperature,
             onValueChange = { newValue ->
@@ -211,7 +258,9 @@ fun TimeTemperatureRow(index: Int) {
             label = { Text("Temperatura (°C)") },
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            modifier = Modifier.weight(1f) // Take up remaining space
+            modifier = Modifier
+                .weight(1f)
+                .padding(bottom = 8.dp)
         )
     }
 }
@@ -301,82 +350,48 @@ fun LargePrimedbeTextField() {
 fun NumberInputLayout() {
 
     Column {
-//        MyBigText(text = "I Smena")
-        Row(modifier = Modifier
-            .padding(vertical = 0.dp)
-            .fillMaxWidth()) {
-            var number1 by remember { mutableStateOf("") }
-            var number2 by remember { mutableStateOf("") }
+        var number1 by remember { mutableStateOf("") }
+        var number2 by remember { mutableStateOf("") }
+        var number3 by remember { mutableStateOf("") }
+        var number4 by remember { mutableStateOf("") }
 
-            OutlinedTextField(
-                value = number1,
-                onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
-                        number1 = newValue
-                    }
-                },
-                label = { Text("Gradjevinski radnici") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .weight(1f) // Each TextField takes up equal space
-                    .padding(end = 8.dp)
-            )
-            OutlinedTextField(
-                value = number2,
-                onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
-                        number2 = newValue
-                    }
-                },
-                label = { Text("Zanatlije") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .weight(1f) // Each TextField takes up equal space
-            )
-        }
-        Row(modifier = Modifier
-            .padding(vertical = 8.dp)
-            .fillMaxWidth()) {
-            var number3 by remember { mutableStateOf("") }
-            var number4 by remember { mutableStateOf("") }
+        val numbers = listOf(
+            Pair("Gradjevinski radnici", number1),
+            Pair("Zanatlije", number2),
+            Pair("Tehnicko osoblje", number3),
+            Pair("Ostali", number4)
+        )
 
-            OutlinedTextField(
-                value = number3,
-                onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
-                        number3 = newValue
-                    }
-                },
-                label = { Text("Tehnicko osoblje") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .weight(1f) // Each TextField takes up equal space
-                    .padding(end = 8.dp) // Add some horizontal padding between TextFields
-            )
-            OutlinedTextField(
-                value = number4,
-                onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
-                        number4 = newValue
-                    }
-                },
-                label = { Text("Ostali") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .weight(1f) // Each TextField takes up equal space
-            )
+        Column {
+            numbers.forEachIndexed { index, pair ->
+                val (label, value) = pair
+                OutlinedTextField(
+                    value = value,
+                    onValueChange = { newValue ->
+                        if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
+                            when (index) {
+                                0 -> number1 = newValue
+                                1 -> number2 = newValue
+                                2 -> number3 = newValue
+                                3 -> number4 = newValue
+                            }
+                        }
+                    },
+                    label = { Text(label) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp) // Add padding to separate the TextFields
+                )
+            }
         }
 
-        // Second row with a non-clickable element that spans the full width
         OutlinedTextField(
-            value = "0",
+            value = number1 + number2 + number3 + number4,
             onValueChange = {}, // No action on value change
             label = { Text("Ukupno") },
-            enabled = false, // Makes the text field non-editable and non-clickable
+            enabled = false,
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
@@ -403,8 +418,12 @@ fun FilePicker() {
     Column(modifier = Modifier.padding(top = 16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = "Dodajte Prilog:  ")
-            Button(modifier = Modifier.weight(1f), onClick = { filePickerLauncher.launch("*/*") }) { // Launches file picker, "*" indicates any file type
-                Text("Dodajte Fajl")
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = { filePickerLauncher.launch("*/*") }
+            ) { // Launches file picker, "*" indicates any file type
+                Icon(imageVector = Icons.Filled.UploadFile, contentDescription = null)
+                Text(" Dodajte Fajl")
             }
         }
 
@@ -415,3 +434,98 @@ fun FilePicker() {
     }
 }
 
+@Composable
+fun Stampaj() {
+    OutlinedButton(
+        onClick = {
+            // Add your save action here
+        },
+        border = BorderStroke(1.dp, Color.Blue),
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Blue),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Icon(imageVector = Icons.Filled.Print, contentDescription = "Stampaj")
+        Text(" Stampaj")
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerTextField(/*time: LocalTime, timeFormatter: DateTimeFormatter, setTime: (LocalTime) -> Unit*/
+                        onTimeSelected: (Int) -> Unit) {
+    var showingDialog by remember { mutableStateOf(false) }
+
+//    var selectedHour by remember { mutableStateOf(LocalTime.now()) }
+//    var selectedMinute by remember { mutableStateOf(LocalTime.now()) }
+    val timePickerState = rememberTimePickerState(
+        initialHour = LocalTime.now().hour,
+        initialMinute = LocalTime.now().minute,
+        is24Hour = true
+    )
+    Text(
+        text = "${timePickerState.hour}:${timePickerState.minute}",
+        fontSize = 24.sp,
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable { showingDialog = true },
+        color = MaterialTheme.colorScheme.primary
+    )
+//    Text(
+//        text = time.format(timeFormatter),
+//        fontSize = 24.sp,
+//        modifier = Modifier
+//            .padding(8.dp)
+//            .clickable { showingDialog = true },
+//        color = MaterialTheme.colorScheme.primary
+//    )
+
+    if (showingDialog) {
+        AlertDialog(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(size = 12.dp)
+                ),
+            onDismissRequest = { showingDialog = false }
+        ) {
+            Column(
+                modifier = Modifier
+                    .background(
+                        color = Color.LightGray.copy(alpha = 0.3f)
+                    )
+                    .padding(top = 28.dp, start = 20.dp, end = 20.dp, bottom = 12.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // time picker
+                TimePicker(state = timePickerState)
+
+                // buttons
+                Row(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    // dismiss button
+                    TextButton(onClick = { showingDialog = false }) {
+                        Text(text = "Dismiss")
+                    }
+
+                    // confirm button
+                    TextButton(
+                        onClick = {
+                            showingDialog = false
+                            onTimeSelected(timePickerState.hour * 60 + timePickerState.minute)
+//                            selectedHour.withHour(timePickerState.hour)
+//                            selectedMinute.withMinute(timePickerState.minute)
+                        }
+                    ) {
+                        Text(text = "Confirm")
+                    }
+                }
+            }
+        }
+    }
+}

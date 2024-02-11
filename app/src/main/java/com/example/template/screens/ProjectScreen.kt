@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -20,12 +22,15 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -36,7 +41,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.template.screens.elements.DownloadPDF
 import com.example.template.screens.elements.LabeledRow
 import com.example.template.screens.elements.MyHeaderText
@@ -50,9 +57,17 @@ fun ProjectScreen() {
 
     Scaffold(
         topBar = {
-            SimpleTopAppBar(
+            TopAppBar(
+                modifier = Modifier.padding(vertical = 16.dp),
+                title = { Text(
+                    text = "Projekat: Izgradnja i rekonstrukcija poletno sletnih staza",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.W800,
+                    color = Color.White,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) },
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
                 scrollBehavior = scrollBehavior,
-                text = "Projekat: Izgradnja i rekonstrukcija poletno sletnih staza"
             )
         },
         floatingActionButton = {
@@ -64,6 +79,12 @@ fun ProjectScreen() {
                 elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
             ) {
                 Icon(Icons.Filled.Download, "Download")
+            }
+        },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.height(0.dp)
+            ) {
             }
         }
 //        bottomBar = {
@@ -100,6 +121,7 @@ fun ProjectScreen() {
             .padding(innerPadding)
         ) {
 
+            LabeledRow(label = "Dnevnik", value = "Izgradnja piste aerodroma")
             MyHeaderText(text = "Dnevnik Vode")
             LabeledRow(label = "Odgovorni Izvodjac", value = "Petar Nikolic")
             LabeledRow(label = "Vrsi Nadzor", value = "Sava Mihajlovic")

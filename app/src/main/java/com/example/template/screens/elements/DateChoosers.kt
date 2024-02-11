@@ -2,14 +2,20 @@ package com.example.template.screens.elements
 
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -18,7 +24,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import java.text.DateFormatSymbols
 import java.time.LocalDate
 import java.util.Calendar
@@ -37,7 +46,6 @@ fun DaySelector() {
     val daysOfWeekSerbian = listOf("Ponedeljak", "Utorak", "Sreda", "Cetvrtak", "Petak", "Subota", "Nedelja")
 
     var expanded by remember { mutableStateOf(false) }
-    // Use the Serbian name for the initially selected day
     var selectedDay by remember { mutableStateOf(daysOfWeekSerbian[currentDayOfWeek]) }
 
     ExposedDropdownMenuBox(
@@ -45,6 +53,9 @@ fun DaySelector() {
         onExpandedChange = { expanded = !expanded }
     ) {
         TextField(
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
             readOnly = true,
             value = "$selectedDay",
             onValueChange = { },
@@ -55,6 +66,7 @@ fun DaySelector() {
             modifier = Modifier.fillMaxWidth().menuAnchor()
         )
         ExposedDropdownMenu(
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
@@ -77,10 +89,12 @@ fun DateChooser() {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val context = LocalContext.current
 
-    // Button to trigger dialog
-    Button(onClick = { showDialog = true }) {
-        Text("Datum: ${selectedDate.toString()}")
-    }
+    Text(
+        text = "Datum: ${selectedDate.toString()}",
+        fontSize = 24.sp,
+        modifier = Modifier.padding(8.dp).clickable { showDialog = true },
+        color = MaterialTheme.colorScheme.primary
+    )
 
     // Show dialog
     if (showDialog) {

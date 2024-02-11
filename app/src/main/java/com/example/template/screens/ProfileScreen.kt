@@ -10,9 +10,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -40,7 +46,13 @@ fun ProfileScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
-        topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior, text = "Postavke Naloga") }
+        topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior, text = "Postavke Naloga") },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.height(0.dp)
+            ) {
+            }
+        }
     ) { innerPadding ->
         Column(modifier = Modifier
             .verticalScroll(scrollState)
@@ -133,7 +145,8 @@ fun PasswordChangeForm() {
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Red),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Promeni Lozinku")
+            Icon(imageVector = Icons.Filled.Password, contentDescription = null)
+            Text(" Promeni Lozinku")
         }
     }
 }
@@ -157,7 +170,8 @@ fun DeleteProfile() {
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Ukloni Nalog")
+            Icon(imageVector = Icons.Filled.DeleteOutline, contentDescription = null)
+            Text(" Ukloni Nalog")
         }
     }
 

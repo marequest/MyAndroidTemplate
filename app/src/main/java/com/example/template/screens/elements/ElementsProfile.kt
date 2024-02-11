@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -71,7 +74,8 @@ fun UserSignatureField() {
             }
             imagePickerLauncher.launch(intent)
         }) {
-            Text("Izaberite potpis")
+            Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+            Text(" Izaberite potpis")
         }
 
         imageUri?.let { uri ->
@@ -94,7 +98,8 @@ fun SaveButton() {
         onClick = { /* Handle save action */ },
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text("Sacuvaj")
+        Icon(imageVector = Icons.Filled.Save, contentDescription = null)
+        Text(" Sacuvaj")
     }
 }
 
