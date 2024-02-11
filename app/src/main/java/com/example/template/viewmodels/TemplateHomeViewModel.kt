@@ -33,7 +33,7 @@ class TemplateHomeViewModel(private val emailsRepository: EmailsRepository = Ema
 
     init {
         observeEmails()
-        fetchCatFacts()
+//        fetchCatFacts()
     }
 
     fun fetchCatFacts() {

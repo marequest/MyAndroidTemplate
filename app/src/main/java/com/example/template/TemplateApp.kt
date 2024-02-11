@@ -40,7 +40,8 @@ import com.example.template.screens.ConstructionJournalForm
 import com.example.template.screens.EmptyComingSoon
 import com.example.template.screens.HomeScreen
 import com.example.template.screens.LoginScreen
-import com.example.template.screens.TabScreenWithProgress
+import com.example.template.screens.ProfileScreen
+import com.example.template.screens.ProjectScreen
 import com.example.template.utils.ContentType
 import com.example.template.utils.DevicePosture
 import com.example.template.utils.NavigationType
@@ -259,7 +260,8 @@ fun TemplateNavHost(
             )
         }
         composable(NavDestinations.INBOX) {
-            HomeScreen(viewModel)
+//            HomeScreen(viewModel)
+            ProjectScreen()
         }
         composable(NavDestinations.DM) {
             EmptyComingSoon()
@@ -276,7 +278,7 @@ fun TemplateNavHost(
 //            }
         }
         composable(NavDestinations.ARTICLES) {
-            TabScreenWithProgress()
+            ProfileScreen()
         }
         composable(NavDestinations.GROUPS) {
             Testing()
