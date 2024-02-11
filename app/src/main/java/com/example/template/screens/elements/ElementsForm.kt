@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -61,15 +62,26 @@ fun LabeledRow(label: String, value: String) {
             text = label,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
-            modifier = Modifier.weight(0.7f) // Allocates space based on weight, pushing the label to the left
+            modifier = Modifier.weight(0.9f) // Allocates space based on weight, pushing the label to the left
         )
         Text(
             text = value,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
-            modifier = Modifier.weight(1.3f) // Ensures the value starts from the same position across all rows
+            modifier = Modifier.weight(1.1f) // Ensures the value starts from the same position across all rows
         )
     }
+}
+
+@Composable
+fun MyHeaderText(text: String) {
+    Text(
+        text = text,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.W400,
+        modifier = Modifier.padding(top = 8.dp)
+    )
+    HorizontalLineSpacer(modifier = Modifier.padding(top = 0.dp))
 }
 
 @Composable
@@ -112,17 +124,6 @@ fun DropdownTab(title: String, expanded: Boolean, onTabClick: () -> Unit, conten
             }
         }
     }
-}
-
-
-@Composable
-fun MyBigText(text: String) {
-    Text(
-        text = text,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Medium,
-        modifier = Modifier.padding(top = 8.dp)
-    )
 }
 
 @Composable
@@ -400,8 +401,11 @@ fun FilePicker() {
     }
 
     Column(modifier = Modifier.padding(top = 16.dp)) {
-        Button(onClick = { filePickerLauncher.launch("*/*") }) { // Launches file picker, "*" indicates any file type
-            Text("Dodajte Fajl")
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Dodajte Prilog:  ")
+            Button(modifier = Modifier.weight(1f), onClick = { filePickerLauncher.launch("*/*") }) { // Launches file picker, "*" indicates any file type
+                Text("Dodajte Fajl")
+            }
         }
 
         // Display the selected file name

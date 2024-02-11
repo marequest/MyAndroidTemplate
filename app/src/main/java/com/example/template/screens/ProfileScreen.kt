@@ -13,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,8 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.template.screens.elements.HorizontalLineSpacer
-import com.example.template.screens.elements.MyBigText
+import com.example.template.screens.elements.MyHeaderText
 import com.example.template.screens.elements.PasswordField
 import com.example.template.screens.elements.SaveButton
 import com.example.template.screens.elements.UserProfileField
@@ -37,7 +35,6 @@ import com.example.template.screens.elements.UserSignatureField
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen() {
-
     val scrollState = rememberScrollState()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -95,7 +92,7 @@ fun PasswordChangeForm() {
 
 
     Column(modifier = Modifier.padding(16.dp)) {
-        MyBigText(text = "Promena Lozinke")
+        MyHeaderText(text = "Promena Lozinke")
         Spacer(modifier = Modifier.height(16.dp))
 
         PasswordField(
@@ -145,7 +142,7 @@ fun PasswordChangeForm() {
 fun DeleteProfile() {
 
     Column(modifier = Modifier.padding(16.dp)) {
-        MyBigText(text = "Uklanjanje Naloga")
+        MyHeaderText(text = "Uklanjanje Naloga")
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(text = "Nakon kompletiranja ove akcije, Vas nalog ce biti uklonjen sa sistema, " +

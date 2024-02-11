@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -37,7 +36,7 @@ import com.example.template.screens.elements.HorizontalLineSpacer
 import com.example.template.screens.elements.LabeledRow
 import com.example.template.screens.elements.LargeDescriptionTextField
 import com.example.template.screens.elements.LargePrimedbeTextField
-import com.example.template.screens.elements.MyBigText
+import com.example.template.screens.elements.MyHeaderText
 import com.example.template.screens.elements.NumberInputLayout
 import com.example.template.screens.elements.TimeSelectionRow
 import com.example.template.screens.elements.TimeTemperatureRow
@@ -49,6 +48,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Testing() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     Scaffold(
         floatingActionButton = { InfoFABWithDialog() },
@@ -59,7 +59,7 @@ fun Testing() {
             .padding(innerPadding)
         ) {
             HorizontalLineSpacer(modifier = Modifier.padding(top = 8.dp))
-            TabScreenWithProgress()
+            TabScreenWithProgress(selectedTabIndex) { selectedTabIndex = it }
         }
     }
 }
@@ -75,8 +75,7 @@ fun SimpleTopAppBar(scrollBehavior: TopAppBarScrollBehavior, text: String) {
 }
 
 @Composable
-fun TabScreenWithProgress() {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+fun TabScreenWithProgress(selectedTabIndex: Int, changeSelectedIndex: (Int) -> Unit) {
     val tabs = listOf("Korak 1", "Korak 2", "Korak 3")
     val tabIcons = listOf(Icons.Filled.DateRange, Icons.Filled.AccessTime, Icons.Filled.People)
 
@@ -104,7 +103,7 @@ fun TabScreenWithProgress() {
                     text = { Text(tabs[index])},
 //                    icon = { Icon(tabIcons[index], contentDescription = null) },
                     selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index }
+                    onClick = { changeSelectedIndex(index) }
                 )
             }
         }
@@ -141,11 +140,11 @@ fun TabScreenWithProgress() {
 
 @Composable
 fun FirstPage() {
-    MyBigText(text = "Radno Vreme")
+    MyHeaderText(text = "Radno Vreme")
     Spacer(modifier = Modifier.height(12.dp))
     DropdownTabsRadnoVremeInput()
-    HorizontalLineSpacer(modifier = Modifier.padding(top = 24.dp))
-    MyBigText(text = "Broj Radnika")
+//    HorizontalLineSpacer(modifier = Modifier.padding(top = 24.dp))
+    MyHeaderText(text = "Broj Radnika")
     Spacer(modifier = Modifier.height(12.dp))
     DropdownTabsBrojRadnikaInput()
 }
@@ -153,21 +152,20 @@ fun FirstPage() {
 @Composable
 fun SecondPage() {
     DateAndDaySelector()
-    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
+//    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
     TimeTemperatureRows()
-    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
+//    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
     TripleInputRows()
 }
 
 @Composable
 fun ThirdPage() {
-//    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
     LargeDescriptionTextField()
-//    HorizontalLineSpacer(modifier = Modifier.padding(12.dp))
     LargePrimedbeTextField()
-    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
+//    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
     FilePicker()
-    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
+//    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
+    MyHeaderText(text = "Informacije")
     LabeledRow(label = "Vode Dnevnik", value = "")
     LabeledRow(label = "Izvodjac Radova", value = "Potpis")
     LabeledRow(label = "Nadzorni Organ", value = "")
