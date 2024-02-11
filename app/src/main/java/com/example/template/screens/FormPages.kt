@@ -1,5 +1,7 @@
+import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -19,14 +21,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Print
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.DialogProperties
 import com.example.template.screens.elements.DateChooser
 import com.example.template.screens.elements.DaySelector
@@ -38,6 +48,7 @@ import com.example.template.screens.elements.LargeDescriptionTextField
 import com.example.template.screens.elements.LargePrimedbeTextField
 import com.example.template.screens.elements.MyHeaderText
 import com.example.template.screens.elements.NumberInputLayout
+import com.example.template.screens.elements.SaveButton
 import com.example.template.screens.elements.TimeSelectionRow
 import com.example.template.screens.elements.TimeTemperatureRow
 import com.example.template.screens.elements.TripleInputRow
@@ -49,18 +60,56 @@ import kotlinx.coroutines.launch
 fun Testing() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val context = LocalContext.current
 
     Scaffold(
-        floatingActionButton = { InfoFABWithDialog() },
-        topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior, "Gradjevinski Dnevnik") }
+        floatingActionButton = {
+            Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.padding(16.dp)) {
+                Column(horizontalAlignment = Alignment.End) {
+                    InfoFABWithDialog()
+                    Spacer(modifier = Modifier.padding(8.dp))
+                    FloatingActionButton(
+                        onClick = {
+                            when (selectedTabIndex) {
+                                0 -> {
+                                    selectedTabIndex = 1
+                                }
+                                1 -> {
+                                    selectedTabIndex = 2
+                                }
+                                else -> { // Cuvaj Podatke
+                                    Toast.makeText(context, "Sacuvano!", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+                    ) {
+                        if (selectedTabIndex == 2){
+                            Icon(Icons.Filled.Check, "Sledeca Stranica")
+                        } else {
+                            Icon(Icons.Filled.NavigateNext, "Sacuvaj")
+
+                        }
+                    }
+                }
+            }
+        },
+        topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior, "Gradjevinski Dnevnik") },
+//        bottomBar = {
+//            BottomAppBar(
+//                actions = {
+//                    InfoFABWithDialog()
+//                },
+//            )
+//        }
     ) { innerPadding ->
         Column(modifier = Modifier
-            .padding(16.dp)
+            .padding(start = 16.dp, end = 16.dp)
             .padding(innerPadding)
         ) {
-            HorizontalLineSpacer(modifier = Modifier.padding(top = 8.dp))
-            TabScreenWithProgress(selectedTabIndex) { selectedTabIndex = it }
-        }
+//            HorizontalLineSpacer(modifier = Modifier.padding(top = 8.dp))
+            TabScreenWithProgress(selectedTabIndex) { selectedTabIndex = it }        }
     }
 }
 
@@ -70,12 +119,14 @@ fun SimpleTopAppBar(scrollBehavior: TopAppBarScrollBehavior, text: String) {
 
     TopAppBar(
         title = { Text(text) },
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         scrollBehavior = scrollBehavior,
     )
 }
 
 @Composable
 fun TabScreenWithProgress(selectedTabIndex: Int, changeSelectedIndex: (Int) -> Unit) {
+//    var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("Korak 1", "Korak 2", "Korak 3")
     val tabIcons = listOf(Icons.Filled.DateRange, Icons.Filled.AccessTime, Icons.Filled.People)
 
@@ -169,6 +220,26 @@ fun ThirdPage() {
     LabeledRow(label = "Vode Dnevnik", value = "")
     LabeledRow(label = "Izvodjac Radova", value = "Potpis")
     LabeledRow(label = "Nadzorni Organ", value = "")
+
+    Spacer(modifier = Modifier.height(16.dp))
+    Stampaj()
+
+    SaveButton()
+}
+
+@Composable
+fun Stampaj() {
+    OutlinedButton(
+        onClick = {
+            // Add your save action here
+        },
+        border = BorderStroke(1.dp, Color.Blue),
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.Blue),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Icon(imageVector = Icons.Filled.Print, contentDescription = "Stampaj")
+        Text(" Stampaj")
+    }
 }
 
 @Composable
@@ -272,7 +343,10 @@ fun InfoFABWithDialog() {
     var showDialog by remember { mutableStateOf(false) }
 
     // Floating Action Button with Info Icon
-    FloatingActionButton(onClick = { showDialog = true }) {
+    FloatingActionButton(
+//        modifier = Modifier.padding(20.dp),
+        onClick = { showDialog = true }
+    ) {
         Icon(Icons.Filled.Info, contentDescription = "Info")
     }
 

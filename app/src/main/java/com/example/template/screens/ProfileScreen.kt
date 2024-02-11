@@ -45,7 +45,7 @@ fun ProfileScreen() {
         Column(modifier = Modifier
             .verticalScroll(scrollState)
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(start = 16.dp, end = 16.dp)
             .padding(innerPadding)
         ) {
             ProfileInfo()

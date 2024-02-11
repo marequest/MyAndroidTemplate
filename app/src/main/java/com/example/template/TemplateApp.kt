@@ -1,6 +1,5 @@
 package com.example.template
 
-import FirstPage
 import Testing
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -36,9 +35,7 @@ import com.example.template.navigation.TemplateBottomNavigationBar
 import com.example.template.navigation.TemplateNavigationActions
 import com.example.template.navigation.TemplateNavigationRail
 import com.example.template.navigation.TemplateTopLevelDestination
-import com.example.template.screens.ConstructionJournalForm
 import com.example.template.screens.EmptyComingSoon
-import com.example.template.screens.HomeScreen
 import com.example.template.screens.LoginScreen
 import com.example.template.screens.ProfileScreen
 import com.example.template.screens.ProjectScreen
@@ -277,11 +274,11 @@ fun TemplateNavHost(
 //                )
 //            }
         }
-        composable(NavDestinations.ARTICLES) {
-            ProfileScreen()
-        }
         composable(NavDestinations.GROUPS) {
             Testing()
+        }
+        composable(NavDestinations.PROFILE) {
+            ProfileScreen()
         }
     }
 }

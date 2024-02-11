@@ -124,6 +124,7 @@ fun TemplateBottomNavigationBar(
                 onClick = { navigateToTopLevelDestination(destionation) },
                 icon = {
                     Icon(
+                        modifier = Modifier.size(28.dp),
                         imageVector = destionation.selectedIcon,
                         contentDescription = stringResource(id = destionation.iconTextId)
                     )
@@ -145,7 +146,7 @@ fun NavigationDrawerContent(
         modifier
             .wrapContentWidth()
             .fillMaxHeight()
-            .padding(24.dp)
+            .padding(8.dp)
     ) {
         Row(
             modifier = modifier
