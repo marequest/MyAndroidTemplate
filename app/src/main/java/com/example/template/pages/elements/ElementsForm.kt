@@ -1,4 +1,4 @@
-package com.example.template.screens.elements
+package com.example.template.pages.elements
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -64,7 +64,6 @@ import androidx.compose.ui.unit.sp
 import java.time.LocalTime
 import kotlin.math.abs
 import kotlin.math.ceil
-import kotlin.math.log
 
 @Composable
 fun LabeledRow(label: String, value: String) {

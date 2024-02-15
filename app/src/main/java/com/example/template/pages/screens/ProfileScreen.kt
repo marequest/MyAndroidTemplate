@@ -1,6 +1,5 @@
-package com.example.template.screens
+package com.example.template.pages.screens
 
-import SimpleTopAppBar
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +12,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,11 +30,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.template.screens.elements.MyHeaderText
-import com.example.template.screens.elements.PasswordField
-import com.example.template.screens.elements.SaveButton
-import com.example.template.screens.elements.UserProfileField
-import com.example.template.screens.elements.UserSignatureField
+import com.example.template.pages.elements.MyHeaderText
+import com.example.template.pages.elements.PasswordField
+import com.example.template.pages.elements.SaveButton
+import com.example.template.pages.elements.UserProfileField
+import com.example.template.pages.elements.UserSignatureField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

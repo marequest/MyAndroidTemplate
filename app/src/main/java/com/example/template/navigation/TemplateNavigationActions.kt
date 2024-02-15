@@ -19,11 +19,14 @@ package com.example.template.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Inbox
+import androidx.compose.material.icons.filled.InsertDriveFile
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material.icons.outlined.Preview
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -31,10 +34,14 @@ import com.example.template.R
 
 object NavDestinations {
     const val LOGIN = "Login"
-    const val INBOX = "Inbox"
+//    const val INBOX = "Inbox"
+//    const val DM = "DirectMessages"
+//    const val GROUPS = "Groups"
+    const val DNEVNICI_SCREEN = "DnevniciScreen"
+    const val PROJECT_SCREEN = "ProjectScreen"
+    const val DNEVNIK_FORM_SCREEN = "DnevniciFormScreen"
     const val PROFILE = "Profile"
-    const val DM = "DirectMessages"
-    const val GROUPS = "Groups"
+
 }
 
 data class TemplateTopLevelDestination(
@@ -65,27 +72,27 @@ class TemplateNavigationActions(private val navController: NavHostController) {
 
 val TOP_LEVEL_DESTINATIONS = listOf(
     TemplateTopLevelDestination(
-        route = NavDestinations.INBOX,
-        selectedIcon = Icons.Default.Inbox,
-        unselectedIcon = Icons.Default.Inbox,
-        iconTextId = R.string.tab_inbox
+        route = NavDestinations.DNEVNICI_SCREEN,
+        selectedIcon = Icons.Default.List,
+        unselectedIcon = Icons.Default.List,
+        iconTextId = R.string.dnevnici
     ),
     TemplateTopLevelDestination(
-        route = NavDestinations.DM,
-        selectedIcon = Icons.Outlined.ChatBubbleOutline,
-        unselectedIcon = Icons.Outlined.ChatBubbleOutline,
-        iconTextId = R.string.tab_inbox
+        route = NavDestinations.PROJECT_SCREEN,
+        selectedIcon = Icons.Outlined.Preview,
+        unselectedIcon = Icons.Outlined.Preview,
+        iconTextId = R.string.projekat
     ),
     TemplateTopLevelDestination(
-        route = NavDestinations.GROUPS,
-        selectedIcon = Icons.Default.Today,
-        unselectedIcon = Icons.Default.Today,
-        iconTextId = R.string.tab_article
+        route = NavDestinations.DNEVNIK_FORM_SCREEN,
+        selectedIcon = Icons.Default.InsertDriveFile,
+        unselectedIcon = Icons.Default.InsertDriveFile,
+        iconTextId = R.string.dnevnik
     ),
     TemplateTopLevelDestination(
         route = NavDestinations.PROFILE,
-        selectedIcon = Icons.Default.Settings,
-        unselectedIcon = Icons.Default.Settings,
+        selectedIcon = Icons.Default.Person,
+        unselectedIcon = Icons.Default.Person,
         iconTextId = R.string.profile
     )
 )

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.example.template.data.local
+package com.example.template.emaildata.local
 
 import com.example.template.R
-import com.example.template.data.Email
-import com.example.template.data.EmailAttachment
-import com.example.template.data.MailboxType
+import com.example.template.emaildata.Email
+import com.example.template.emaildata.EmailAttachment
+import com.example.template.emaildata.MailboxType
 
 /**
  * A static data store of [Email]s.

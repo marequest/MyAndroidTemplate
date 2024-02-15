@@ -1,8 +1,8 @@
+package com.example.template.pages.screens
+
 import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,15 +22,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -42,29 +37,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
-import com.example.template.screens.elements.DateChooser
-import com.example.template.screens.elements.DaySelector
-import com.example.template.screens.elements.DropdownTab
-import com.example.template.screens.elements.FilePicker
-import com.example.template.screens.elements.HorizontalLineSpacer
-import com.example.template.screens.elements.LabeledRow
-import com.example.template.screens.elements.LargeDescriptionTextField
-import com.example.template.screens.elements.LargePrimedbeTextField
-import com.example.template.screens.elements.MyHeaderText
-import com.example.template.screens.elements.NumberInputLayout
-import com.example.template.screens.elements.SaveButton
-import com.example.template.screens.elements.Stampaj
-import com.example.template.screens.elements.TimeSelectionRow
-import com.example.template.screens.elements.TimeTemperatureRow
-import com.example.template.screens.elements.TripleInputRow
+import com.example.template.pages.elements.DateChooser
+import com.example.template.pages.elements.DaySelector
+import com.example.template.pages.elements.DropdownTab
+import com.example.template.pages.elements.FilePicker
+import com.example.template.pages.elements.HorizontalLineSpacer
+import com.example.template.pages.elements.LabeledRow
+import com.example.template.pages.elements.LargeDescriptionTextField
+import com.example.template.pages.elements.LargePrimedbeTextField
+import com.example.template.pages.elements.MyHeaderText
+import com.example.template.pages.elements.NumberInputLayout
+import com.example.template.pages.elements.SaveButton
+import com.example.template.pages.elements.Stampaj
+import com.example.template.pages.elements.TimeSelectionRow
+import com.example.template.pages.elements.TimeTemperatureRow
+import com.example.template.pages.elements.TripleInputRow
 import kotlinx.coroutines.launch
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Testing() {
+fun DnevnikFormScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
@@ -94,7 +87,10 @@ fun Testing() {
                         elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
                     ) {
                         if (selectedTabIndex == 2){
-                            Icon(Icons.Filled.Save, "Sacuvaj")
+                            Row(Modifier.padding(horizontal = 20.dp)) {
+                                Icon(Icons.Filled.Save, "Sacuvaj")
+                                Text(modifier = Modifier.padding(top = 2.dp), text = "  Sacuvaj")
+                            }
                         } else {
                             Icon(Icons.Filled.NavigateNext, "Sledeca Stranica")
 

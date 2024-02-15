@@ -1,6 +1,6 @@
 package com.example.template
 
-import Testing
+import com.example.template.pages.screens.DnevnikFormScreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -35,10 +35,10 @@ import com.example.template.navigation.TemplateBottomNavigationBar
 import com.example.template.navigation.TemplateNavigationActions
 import com.example.template.navigation.TemplateNavigationRail
 import com.example.template.navigation.TemplateTopLevelDestination
-import com.example.template.screens.EmptyComingSoon
-import com.example.template.screens.LoginScreen
-import com.example.template.screens.ProfileScreen
-import com.example.template.screens.ProjectScreen
+import com.example.template.pages.screens.LoginScreen
+import com.example.template.pages.screens.ProfileScreen
+import com.example.template.pages.screens.DnevniciScreen
+import com.example.template.pages.screens.ProjectScreen
 import com.example.template.utils.ContentType
 import com.example.template.utils.DevicePosture
 import com.example.template.utils.NavigationType
@@ -123,7 +123,7 @@ private fun TemplateNavigationWrapperUI(
         TemplateNavigationActions(navController)
     }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val selectedDestination = navBackStackEntry?.destination?.route ?: NavDestinations.INBOX
+    val selectedDestination = navBackStackEntry?.destination?.route ?: NavDestinations.DNEVNICI_SCREEN
 
     if (navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER && homeUIState.loggedIn) {
         PermanentNavigationDrawer(
@@ -256,26 +256,16 @@ fun TemplateNavHost(
                 }
             )
         }
-        composable(NavDestinations.INBOX) {
-//            HomeScreen(viewModel)
+        composable(NavDestinations.DNEVNICI_SCREEN) {
+            DnevniciScreen(onDnevnikClick = {dnevnikId ->
+//                navigateToTopLevelDestination(TOP_LEVEL_DESTINATIONS[2])
+            })
+        }
+        composable(NavDestinations.PROJECT_SCREEN) {
             ProjectScreen()
         }
-        composable(NavDestinations.DM) {
-            EmptyComingSoon()
-//            if(contentType == ContentType.DUAL_PANE){
-//                TemplateListAndDetailContent(
-//                    homeUIState = homeUIState,
-////                    modifier = Modifier.weight(1f)
-//                )
-//            } else {
-//                TemplateListOnlyContent(
-//                    homeUIState = homeUIState,
-////                    modifier = Modifier.weight(1f)
-//                )
-//            }
-        }
-        composable(NavDestinations.GROUPS) {
-            Testing()
+        composable(NavDestinations.DNEVNIK_FORM_SCREEN) {
+            DnevnikFormScreen()
         }
         composable(NavDestinations.PROFILE) {
             ProfileScreen()

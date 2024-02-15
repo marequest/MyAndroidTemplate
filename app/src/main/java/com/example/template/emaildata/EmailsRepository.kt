@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.template.data
+package com.example.template.emaildata
 
 import kotlinx.coroutines.flow.Flow
 

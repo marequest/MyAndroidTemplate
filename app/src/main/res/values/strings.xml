@@ -14,4 +14,7 @@
     <string name="empty_screen_title">Screen under construction</string>
     <string name="empty_screen_subtitle">This screen will soon be available.</string>
     <string name="tab_login">Login</string>
+    <string name="dnevnici">Dnevnici</string>
+    <string name="projekat">Projekat</string>
+    <string name="dnevnik">Dnevnik</string>
 </resources>

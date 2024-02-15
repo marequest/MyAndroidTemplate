@@ -1,4 +1,4 @@
-package com.example.template.screens
+package com.example.template.pages.screens
 
 import android.content.Context
 import android.widget.Toast

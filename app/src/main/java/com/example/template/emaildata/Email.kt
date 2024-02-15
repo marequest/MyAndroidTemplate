@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.example.template.data
+package com.example.template.emaildata
 
-import com.example.template.data.local.LocalAccountsDataProvider
+import com.example.template.emaildata.local.LocalAccountsDataProvider
 
 
 /**

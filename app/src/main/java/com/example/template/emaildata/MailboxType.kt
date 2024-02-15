@@ -1,4 +1,4 @@
-package com.example.template.data
+package com.example.template.emaildata
 /*
  * Copyright 2022 Google LLC
  *

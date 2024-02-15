@@ -5,11 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.network.network.ApiService
 import com.example.network.network.RetrofitClient
 import com.example.network.network.CatFact
-import com.example.template.data.Email
-import com.example.template.data.EmailsRepository
-import com.example.template.data.EmailsRepositoryImpl
+import com.example.template.emaildata.Email
+import com.example.template.emaildata.EmailsRepository
+import com.example.template.emaildata.EmailsRepositoryImpl
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
