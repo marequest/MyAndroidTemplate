@@ -5,13 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.network.network.ApiService
 import com.example.network.network.RetrofitClient
 import com.example.network.network.CatFact
-import com.example.template.emaildata.Email
-import com.example.template.emaildata.EmailsRepository
-import com.example.template.emaildata.EmailsRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
@@ -19,7 +15,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
 
-class TemplateHomeViewModel(private val emailsRepository: EmailsRepository = EmailsRepositoryImpl()): ViewModel() {
+class TemplateHomeViewModel(): ViewModel() {
 
     // UI state exposed to the UI
     private val _uiState = MutableStateFlow(HomeUIState(loading = true))
@@ -31,7 +27,7 @@ class TemplateHomeViewModel(private val emailsRepository: EmailsRepository = Ema
 
 
     init {
-        observeEmails()
+//        observeEmails()
 //        fetchCatFacts()
     }
 
@@ -48,7 +44,6 @@ class TemplateHomeViewModel(private val emailsRepository: EmailsRepository = Ema
                             if (response.isSuccessful) {
                                 // Update LiveData or MutableState with the response data
                                 // For example:
-                                println("NIKOLA")
                                 println(response.body())
                                 val catFacts = response.body() ?: emptyList()
                                 _catState.value = CatsState(cats = catFacts)
@@ -77,17 +72,17 @@ class TemplateHomeViewModel(private val emailsRepository: EmailsRepository = Ema
         _uiState.value = _uiState.value.copy(loggedIn = true)
     }
 
-    private fun observeEmails() {
-        viewModelScope.launch {
-            emailsRepository.getAllEmails()
-                .catch { ex ->
-                    _uiState.value = HomeUIState(error = ex.message)
-                }
-                .collect { emails ->
-                    _uiState.value = HomeUIState(emails = emails)
-                }
-        }
-    }
+//    private fun observeEmails() {
+//        viewModelScope.launch {
+//            emailsRepository.getAllEmails()
+//                .catch { ex ->
+//                    _uiState.value = HomeUIState(error = ex.message)
+//                }
+//                .collect { emails ->
+//                    _uiState.value = HomeUIState(emails = emails)
+//                }
+//        }
+//    }
 }
 
 data class CatsState(
@@ -97,7 +92,6 @@ data class CatsState(
 )
 
 data class HomeUIState(
-    val emails: List<Email> = emptyList(),
     val loggedIn: Boolean = false,
     val loading: Boolean = false,
     val error: String? = null

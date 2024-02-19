@@ -195,43 +195,6 @@ fun TimeSelectionRow() {
     }
 }
 
-
-//@Composable
-//fun TimeSelectionRow() {
-////    var fromTime by remember { mutableStateOf(LocalTime.now().withMinute(0).withSecond(0).withNano(0)) }
-////    var toTime by remember { mutableStateOf(LocalTime.now().withMinute(0).withSecond(0).withNano(0).plusHours(1)) }
-//    var ukupnoSatiValue by remember { mutableStateOf(0) }
-//    var prviMinut = 0
-//    var drugiMinut = 0
-////    ukupnoSatiValue = ceil(abs(drugiMinut - prviMinut) / 60.0).toInt()
-////    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-//
-//    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(0.dp)) {
-////        Text(text = smena)
-//        Spacer(modifier = Modifier.width(8.dp))
-//        TimePickerTextField() { prviMinut = it }
-//        Spacer(modifier = Modifier.width(8.dp))
-//        TimePickerTextField() { drugiMinut = it }
-//        Spacer(modifier = Modifier.width(12.dp))
-//
-//        OutlinedTextField(
-//            value = (ceil(abs(drugiMinut - prviMinut) / 60.0).toInt()).toString(),
-//            onValueChange = { newValue ->
-//                if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
-//                    ukupnoSatiValue = newValue.toInt()
-//                }
-//            },
-//            enabled = false,
-//            label = { Text("Ukupno") },
-//            singleLine = true,
-//            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-//            modifier = Modifier
-//                .weight(1f)
-//                .padding(bottom = 8.dp)
-//        )
-//    }
-//}
-
 @Composable
 fun TimeTemperatureRow(index: Int) {
 //    var time by remember { mutableStateOf(LocalTime.now()) }
@@ -347,7 +310,6 @@ fun LargePrimedbeTextField() {
 
 @Composable
 fun NumberInputLayout() {
-
     Column {
         var number1 by remember { mutableStateOf("") }
         var number2 by remember { mutableStateOf("") }
@@ -454,8 +416,6 @@ fun TimePickerTextField(/*time: LocalTime, timeFormatter: DateTimeFormatter, set
                         onTimeSelected: (Int) -> Unit) {
     var showingDialog by remember { mutableStateOf(false) }
 
-//    var selectedHour by remember { mutableStateOf(LocalTime.now()) }
-//    var selectedMinute by remember { mutableStateOf(LocalTime.now()) }
     val timePickerState = rememberTimePickerState(
         initialHour = LocalTime.now().hour,
         initialMinute = LocalTime.now().minute,
@@ -469,14 +429,6 @@ fun TimePickerTextField(/*time: LocalTime, timeFormatter: DateTimeFormatter, set
             .clickable { showingDialog = true },
         color = MaterialTheme.colorScheme.primary
     )
-//    Text(
-//        text = time.format(timeFormatter),
-//        fontSize = 24.sp,
-//        modifier = Modifier
-//            .padding(8.dp)
-//            .clickable { showingDialog = true },
-//        color = MaterialTheme.colorScheme.primary
-//    )
 
     if (showingDialog) {
         AlertDialog(
@@ -517,8 +469,6 @@ fun TimePickerTextField(/*time: LocalTime, timeFormatter: DateTimeFormatter, set
                         onClick = {
                             showingDialog = false
                             onTimeSelected(timePickerState.hour * 60 + timePickerState.minute)
-//                            selectedHour.withHour(timePickerState.hour)
-//                            selectedMinute.withMinute(timePickerState.minute)
                         }
                     ) {
                         Text(text = "Confirm")

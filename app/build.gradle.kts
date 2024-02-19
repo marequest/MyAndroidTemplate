@@ -1,4 +1,6 @@
 plugins {
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
@@ -71,6 +73,12 @@ dependencies {
     // Coroutines adapter for Retrofit
     implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
 
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+
 
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.compose.ui:ui")
@@ -88,4 +96,8 @@ dependencies {
     // my network
     implementation(project(":network"))
 
+}
+
+kapt {
+    correctErrorTypes = true
 }

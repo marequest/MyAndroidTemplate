@@ -73,32 +73,6 @@ fun ProjectScreen() {
             ) {
             }
         }
-//        bottomBar = {
-//            BottomAppBar(
-//                containerColor = Color.Gray,
-//                actions = {
-//                    IconButton(
-//                        modifier = Modifier.padding(start = 20.dp),
-//                        onClick = {
-//                            Toast.makeText(context, "Neka akcija", Toast.LENGTH_SHORT).show()
-//                        }
-//                    ) {
-//                        Icon(Icons.Filled.Add, contentDescription = "Localized description")
-//                    }
-//                },
-//                floatingActionButton = {
-//                    FloatingActionButton(
-//                        onClick = {
-//                            Toast.makeText(context, "Sacuvano!", Toast.LENGTH_LONG).show()
-//                        },
-//                        containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-//                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-//                        ) {
-//                        Icon(Icons.Filled.Download, "Download")
-//                    }
-//                }
-//            )
-//        }
     ) { innerPadding ->
         Column(modifier = Modifier
             .verticalScroll(scrollState)

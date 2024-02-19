@@ -34,25 +34,34 @@ import com.example.template.R
 
 object NavDestinations {
     const val LOGIN = "Login"
-//    const val INBOX = "Inbox"
-//    const val DM = "DirectMessages"
-//    const val GROUPS = "Groups"
     const val DNEVNICI_SCREEN = "DnevniciScreen"
     const val PROJECT_SCREEN = "ProjectScreen"
-    const val DNEVNIK_FORM_SCREEN = "DnevniciFormScreen"
+    const val DNEVNIK_FORM_SCREEN = "DnevniciFormScreen/{dnevnikId}"
     const val PROFILE = "Profile"
 
 }
-
 data class TemplateTopLevelDestination(
     val route: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
     val iconTextId: Int
 )
-
 class TemplateNavigationActions(private val navController: NavHostController) {
+    fun navigateToByDnenikId(destination: TemplateTopLevelDestination, dnevnikId: String? = null) {
+        val route = if (dnevnikId != null) {
+            destination.route.replace("{dnevnikId}", dnevnikId)
+        } else {
+            destination.route
+        }
 
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
     fun navigateTo(destination: TemplateTopLevelDestination) {
         navController.navigate(destination.route) {
             // Pop up to the start destination of the graph to
@@ -69,6 +78,7 @@ class TemplateNavigationActions(private val navController: NavHostController) {
         }
     }
 }
+
 
 val TOP_LEVEL_DESTINATIONS = listOf(
     TemplateTopLevelDestination(

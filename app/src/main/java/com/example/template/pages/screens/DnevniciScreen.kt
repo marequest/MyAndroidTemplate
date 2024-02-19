@@ -79,7 +79,7 @@ fun DenvnikCard(dnevnik: Dnevnik, onDnevnikClick: (Int) -> Unit = {}) {
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .shadow(8.dp, RoundedCornerShape(8.dp))
             .fillMaxWidth()
-            .clickable { onDnevnikClick },
+            .clickable { onDnevnikClick(dnevnik.id.toInt()) },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(

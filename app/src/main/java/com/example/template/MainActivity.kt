@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.template.emaildata.local.LocalEmailsDataProvider
 import com.example.template.ui.theme.TemplateTheme
 import com.example.template.viewmodels.HomeUIState
 import com.example.template.viewmodels.TemplateHomeViewModel
@@ -31,6 +30,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
 
         enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -57,7 +57,7 @@ fun TemplateAppPreview() {
     TemplateTheme {
         TemplateApp(
             viewModel = TemplateHomeViewModel(),
-            homeUIState = HomeUIState(emails = LocalEmailsDataProvider.allEmails),
+            homeUIState = HomeUIState(),
             windowSize = WindowSizeClass.calculateFromSize(DpSize(400.dp, 900.dp)),
             displayFeatures = emptyList(),
         )
@@ -71,7 +71,7 @@ fun TemplateAppPreviewTablet() {
     TemplateTheme {
         TemplateApp(
             viewModel = TemplateHomeViewModel(),
-            homeUIState = HomeUIState(emails = LocalEmailsDataProvider.allEmails),
+            homeUIState = HomeUIState(),
             windowSize = WindowSizeClass.calculateFromSize(DpSize(700.dp, 500.dp)),
             displayFeatures = emptyList(),
         )
@@ -85,7 +85,7 @@ fun TemplateAppPreviewPortrait() {
     TemplateTheme {
         TemplateApp(
             viewModel = TemplateHomeViewModel(),
-            homeUIState = HomeUIState(emails = LocalEmailsDataProvider.allEmails),
+            homeUIState = HomeUIState(),
             windowSize = WindowSizeClass.calculateFromSize(DpSize(500.dp, 700.dp)),
             displayFeatures = emptyList(),
         )
@@ -99,7 +99,7 @@ fun TemplateAppPreviewDesktop() {
     TemplateTheme {
         TemplateApp(
             viewModel = TemplateHomeViewModel(),
-            homeUIState = HomeUIState(emails = LocalEmailsDataProvider.allEmails),
+            homeUIState = HomeUIState(),
             windowSize = WindowSizeClass.calculateFromSize(DpSize(1100.dp, 600.dp)),
             displayFeatures = emptyList(),
         )
@@ -113,7 +113,7 @@ fun TemplateAppPreviewDesktopPortrait() {
     TemplateTheme {
         TemplateApp(
             viewModel = TemplateHomeViewModel(),
-            homeUIState = HomeUIState(emails = LocalEmailsDataProvider.allEmails),
+            homeUIState = HomeUIState(),
             windowSize = WindowSizeClass.calculateFromSize(DpSize(600.dp, 1100.dp)),
             displayFeatures = emptyList(),
         )

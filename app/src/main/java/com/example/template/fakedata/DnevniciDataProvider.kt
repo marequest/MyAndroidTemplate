@@ -16,7 +16,6 @@
 
 package com.example.template.fakedata
 
-import com.example.template.emaildata.Account
 import com.example.template.R
 
 /**

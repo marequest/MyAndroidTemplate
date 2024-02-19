@@ -49,7 +49,6 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Logo or app name
         Image(
             painter = painterResource(id = R.drawable.logocopy),
             contentDescription = null,
@@ -58,7 +57,6 @@ fun LoginScreen(
                 .padding(bottom = 16.dp)
         )
 
-        // Email input
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -75,7 +73,6 @@ fun LoginScreen(
             singleLine = true
         )
 
-        // Password input
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -102,7 +99,6 @@ fun LoginScreen(
         )
 
         val context = LocalContext.current
-        // Forgot Password label
         Text(
             text = "Forgot your password?",
             modifier = Modifier
@@ -116,11 +112,9 @@ fun LoginScreen(
             textAlign = TextAlign.End
         )
 
-        // Login button
         Button(
             onClick = {
                 onLoginSuccessful()
-                // TODO kad budes podesavao da zapravo radi
 //                if (email.isNotEmpty() && password.isNotEmpty()) {
 //                    // Handle login click
 //                    showToast(context,"Login Clicked")
@@ -135,13 +129,11 @@ fun LoginScreen(
             Text("Log in")
         }
 
-        // Create Account label
         Text(
             text = "Create Account",
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    // Handle create account click
                     showToast(context,"Create Account Clicked")
                 },
             color = MaterialTheme.colorScheme.primary,

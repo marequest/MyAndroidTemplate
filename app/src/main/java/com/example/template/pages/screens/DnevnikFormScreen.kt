@@ -29,6 +29,8 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
@@ -37,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavBackStackEntry
 import com.example.template.pages.elements.DateChooser
 import com.example.template.pages.elements.DaySelector
 import com.example.template.pages.elements.DropdownTab
@@ -52,18 +55,21 @@ import com.example.template.pages.elements.Stampaj
 import com.example.template.pages.elements.TimeSelectionRow
 import com.example.template.pages.elements.TimeTemperatureRow
 import com.example.template.pages.elements.TripleInputRow
+import com.example.template.viewmodels.DnevnikScreenViewModel
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DnevnikFormScreen() {
+fun DnevnikFormScreen(dnevnikId: String?) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
 
     Scaffold(
-        topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior, "Gradjevinski Dnevnik") },
+        topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior,
+            "$dnevnikId# Gradjevinski Dnevnik"
+        ) },
         floatingActionButton = {
             Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.padding(0.dp)) {
                 Column(horizontalAlignment = Alignment.End) {
@@ -107,10 +113,9 @@ fun DnevnikFormScreen() {
         }
     ) { innerPadding ->
         Column(modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp)
+//            .padding(start = 16.dp, end = 16.dp)
             .padding(innerPadding)
         ) {
-//            HorizontalLineSpacer(modifier = Modifier.padding(top = 8.dp))
             TabScreenWithProgress(selectedTabIndex) { selectedTabIndex = it }        }
     }
 }
@@ -199,7 +204,6 @@ fun FirstPage() {
     MyHeaderText(text = "Radno Vreme")
     Spacer(modifier = Modifier.height(12.dp))
     DropdownTabsRadnoVremeInput()
-//    HorizontalLineSpacer(modifier = Modifier.padding(top = 24.dp))
     MyHeaderText(text = "Broj Radnika")
     Spacer(modifier = Modifier.height(12.dp))
     DropdownTabsBrojRadnikaInput()
@@ -210,7 +214,6 @@ fun SecondPage() {
     DateAndDaySelector()
     HorizontalLineSpacer(modifier = Modifier.padding(top = 8.dp))
     TimeTemperatureRows()
-//    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
     TripleInputRows()
 }
 
@@ -219,10 +222,7 @@ fun ThirdPage() {
     LargeDescriptionTextField()
     Spacer(modifier = Modifier.padding(4.dp))
     LargePrimedbeTextField()
-//    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
     FilePicker()
-//    HorizontalLineSpacer(modifier = Modifier.padding(top = 16.dp))
-
     MyHeaderText(text = "Informacije")
     LabeledRow(label = "Vode Dnevnik", value = "")
     LabeledRow(label = "Izvodjac Radova", value = "Potpis")

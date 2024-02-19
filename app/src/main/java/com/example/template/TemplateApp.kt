@@ -17,10 +17,12 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -44,7 +46,11 @@ import com.example.template.utils.DevicePosture
 import com.example.template.utils.NavigationType
 import com.example.template.utils.isBookPosture
 import com.example.template.utils.isSeparating
+import com.example.template.viewmodels.DnevniciListScreenViewModel
+import com.example.template.viewmodels.DnevnikScreenViewModel
 import com.example.template.viewmodels.HomeUIState
+import com.example.template.viewmodels.ProfileScreenViewModel
+import com.example.template.viewmodels.ProjectScreenViewModel
 import com.example.template.viewmodels.TemplateHomeViewModel
 import kotlinx.coroutines.launch
 
@@ -141,6 +147,7 @@ private fun TemplateNavigationWrapperUI(
                 navController = navController,
                 navigationType = navigationType,
                 selectedDestination = selectedDestination,
+                navigationActions = navigationActions,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
                 contentType = contentType,
                 homeUIState = homeUIState
@@ -168,6 +175,7 @@ private fun TemplateNavigationWrapperUI(
                 navController = navController,
                 navigationType = navigationType,
                 selectedDestination = selectedDestination,
+                navigationActions = navigationActions,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
                 contentType = contentType,
                 homeUIState = homeUIState,
@@ -188,6 +196,7 @@ fun TemplateAppContent(
     navController: NavHostController,
     navigationType: NavigationType,
     selectedDestination: String,
+    navigationActions: TemplateNavigationActions,
     navigateToTopLevelDestination: (TemplateTopLevelDestination) -> Unit,
     contentType: ContentType,
     homeUIState: HomeUIState,
@@ -207,8 +216,9 @@ fun TemplateAppContent(
             .background(MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             TemplateNavHost(
-                viewModel = viewModel,
+                templateViewModel = viewModel,
                 navController = navController,
+                navigationActions = navigationActions,
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
                 homeUIState = homeUIState,
                 contentType = contentType,
@@ -233,8 +243,9 @@ fun TemplateAppContent(
 
 @Composable
 fun TemplateNavHost(
-    viewModel: TemplateHomeViewModel,
+    templateViewModel: TemplateHomeViewModel,
     navController: NavHostController,
+    navigationActions: TemplateNavigationActions,
     navigateToTopLevelDestination: (TemplateTopLevelDestination) -> Unit,
     homeUIState: HomeUIState,
     contentType: ContentType,
@@ -243,6 +254,11 @@ fun TemplateNavHost(
     modifier: Modifier
 ) {
     val startDestination = if (!homeUIState.loggedIn) NavDestinations.LOGIN else selectedDestination
+
+    val dnevnikViewModel: DnevnikScreenViewModel = viewModel()
+    val dnevniciListScreenViewModel: DnevniciListScreenViewModel = viewModel()
+    val projectScreenViewModel: ProjectScreenViewModel = viewModel()
+    val profileScreenViewModel: ProfileScreenViewModel = viewModel()
 
     NavHost(
         modifier = modifier,
@@ -258,14 +274,15 @@ fun TemplateNavHost(
         }
         composable(NavDestinations.DNEVNICI_SCREEN) {
             DnevniciScreen(onDnevnikClick = {dnevnikId ->
-//                navigateToTopLevelDestination(TOP_LEVEL_DESTINATIONS[2])
+                dnevnikViewModel.setDnevnikId(dnevnikId.toString())
+                navigateToTopLevelDestination(TOP_LEVEL_DESTINATIONS[2])
             })
         }
         composable(NavDestinations.PROJECT_SCREEN) {
             ProjectScreen()
         }
         composable(NavDestinations.DNEVNIK_FORM_SCREEN) {
-            DnevnikFormScreen()
+            DnevnikFormScreen(dnevnikViewModel.uiState.collectAsState().value.dnevnikId)
         }
         composable(NavDestinations.PROFILE) {
             ProfileScreen()
