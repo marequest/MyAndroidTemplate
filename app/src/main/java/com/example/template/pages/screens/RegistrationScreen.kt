@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Visibility
@@ -59,6 +60,7 @@ fun RegistrationScreen(
 ) {
 
     var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordAgain by remember { mutableStateOf("") }
 
@@ -92,6 +94,22 @@ fun RegistrationScreen(
         )
 
         OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            label = { Text("Username") },
+            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            isError = showError && username.isEmpty(),
+            singleLine = true
+        )
+
+        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             modifier = Modifier
@@ -118,14 +136,14 @@ fun RegistrationScreen(
             trailingIcon = {
                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                     Icon(
-                        imageVector = if (isPasswordVisible) Icons.Default.PersonAdd else Icons.Default.Warning,
+                        imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
                     )
                 }
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             isError = showError && password.isEmpty(),

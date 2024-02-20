@@ -39,14 +39,14 @@ import com.example.template.navigation.TemplateNavigationRail
 import com.example.template.navigation.TemplateTopLevelDestination
 import com.example.template.pages.screens.LoginScreen
 import com.example.template.pages.screens.ProfileScreen
-import com.example.template.pages.screens.DnevniciScreen
-import com.example.template.pages.screens.ProjectScreen
+import com.example.template.pages.screens.DnevniciListScreen
+import com.example.template.pages.screens.DnevnikSettingsScreen
 import com.example.template.pages.screens.RegistrationScreen
-import com.example.template.utils.ContentType
-import com.example.template.utils.DevicePosture
-import com.example.template.utils.NavigationType
-import com.example.template.utils.isBookPosture
-import com.example.template.utils.isSeparating
+import com.example.template.ui.utils.ContentType
+import com.example.template.ui.utils.DevicePosture
+import com.example.template.ui.utils.NavigationType
+import com.example.template.ui.utils.isBookPosture
+import com.example.template.ui.utils.isSeparating
 import com.example.template.viewmodels.DnevniciListScreenViewModel
 import com.example.template.viewmodels.DnevnikScreenViewModel
 import com.example.template.viewmodels.HomeUIState
@@ -292,7 +292,7 @@ fun TemplateNavHost(
         }
 
         composable(NavDestinations.DNEVNICI_LIST_SCREEN) {
-            DnevniciScreen(
+            DnevniciListScreen(
                 onDnevnikClick = {dnevnikId ->
                     dnevnikViewModel.setDnevnikId(dnevnikId.toString())
                     navigationActions.navigateTo(NavDestinations.DNEVNIK_FORM_SCREEN)
@@ -304,7 +304,7 @@ fun TemplateNavHost(
             )
         }
         composable(NavDestinations.DNEVNIK_SETTINGS_SCREEN) {
-            ProjectScreen(dnevnikViewModel.uiState.collectAsState().value.dnevnikId)
+            DnevnikSettingsScreen(dnevnikViewModel.uiState.collectAsState().value.dnevnikId)
         }
         composable(NavDestinations.DNEVNIK_FORM_SCREEN) {
             DnevnikFormScreen(dnevnikViewModel.uiState.collectAsState().value.dnevnikId)

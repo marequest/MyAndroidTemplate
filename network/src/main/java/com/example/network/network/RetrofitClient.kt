@@ -14,7 +14,8 @@ class RetrofitClient {
     companion object {
 
         private var retrofit: Retrofit? = null
-        private const val BASE_URL = "https://cat-fact.herokuapp.com/"
+        // TODO Change api
+        private const val BASE_URL = "https://yourapi.com/"
 
         fun getRetrofitInstance(): Retrofit {
             if (retrofit == null) {
@@ -24,7 +25,7 @@ class RetrofitClient {
                 val client = OkHttpClient.Builder()
                     .addInterceptor(loggingInterceptor)
                     // TODO
-//                    .addInterceptor(AuthInterceptor())hello
+                    //.addInterceptor(AuthInterceptor())
                     // Add other interceptors if needed
                     .build()
 

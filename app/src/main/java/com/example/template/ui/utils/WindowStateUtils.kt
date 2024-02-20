@@ -1,4 +1,4 @@
-package com.example.template.utils
+package com.example.template.ui.utils
 /*
  * Copyright 2022 The Android Open Source Project
  *

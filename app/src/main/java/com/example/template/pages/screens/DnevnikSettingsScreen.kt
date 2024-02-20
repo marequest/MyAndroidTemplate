@@ -33,7 +33,7 @@ import com.example.template.pages.elements.MyHeaderText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectScreen(dnevnikId: String?) {
+fun DnevnikSettingsScreen(dnevnikId: String?) {
     val scrollState = rememberScrollState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
@@ -77,10 +77,9 @@ fun ProjectScreen(dnevnikId: String?) {
         Column(modifier = Modifier
             .verticalScroll(scrollState)
             .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp)
+            .padding(16.dp)
             .padding(innerPadding)
         ) {
-
             LabeledRow(label = "Dnevnik", value = "Izgradnja piste aerodroma")
             MyHeaderText(text = "Dnevnik Vode")
             LabeledRow(label = "Odgovorni Izvodjac", value = "Petar Nikolic")

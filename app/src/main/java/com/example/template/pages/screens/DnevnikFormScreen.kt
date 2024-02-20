@@ -233,9 +233,6 @@ fun ThirdPage() {
         Column(Modifier.weight(1f)) {
             Stampaj()
         }
-        Column(Modifier.weight(1f)) {
-            SaveButton()
-        }
     }
 }
 

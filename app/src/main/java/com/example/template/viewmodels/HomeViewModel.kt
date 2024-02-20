@@ -2,9 +2,9 @@ package com.example.template.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.network.network.ApiService
+import com.example.network.network.dump.ApiService
 import com.example.network.network.RetrofitClient
-import com.example.network.network.CatFact
+import com.example.network.network.dump.CatFact
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

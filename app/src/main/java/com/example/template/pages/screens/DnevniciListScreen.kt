@@ -9,23 +9,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.RemoveRedEye
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -38,21 +36,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.example.template.fakedata.DnevniciDataProvider
 import com.example.template.fakedata.Dnevnik
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun DnevniciScreen(
+fun DnevniciListScreen(
     onDnevnikClick: (Int) -> Unit = {},
     onDnevnikSettingsClick: (Int) -> Unit = {}
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val scrollState = rememberScrollState()
 
+    val context = LocalContext.current
 
     var searchText by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -74,6 +74,18 @@ fun DnevniciScreen(
                 .padding(paddingValues)
                 .verticalScroll(scrollState)
         ) {
+            Button(
+                onClick = {
+                    // Add your save action here
+                          showToast(context, "New dnevnik clicked!")
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = Color.White),
+                modifier = Modifier.fillMaxWidth().padding(8.dp)
+            ) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "Napravi novi dnevnik")
+                Text(" Novi Dnevnik")
+            }
+
             for (dnevnik in DnevniciDataProvider.allDnevnici) {
                 DenvnikCard(dnevnik, onDnevnikClick = onDnevnikClick, onDnevnikSettingsClick = onDnevnikSettingsClick)
             }

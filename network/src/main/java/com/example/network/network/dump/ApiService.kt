@@ -1,4 +1,4 @@
-package com.example.network.network
+package com.example.network.network.dump
 
 import retrofit2.Call
 import retrofit2.http.GET

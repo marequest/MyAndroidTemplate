@@ -47,7 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import com.example.template.R
-import com.example.template.utils.NavigationContentPosition
+import com.example.template.ui.utils.NavigationContentPosition
 
 @Composable
 fun TemplateNavigationRail(
