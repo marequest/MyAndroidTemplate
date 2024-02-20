@@ -33,7 +33,7 @@ import com.example.template.pages.elements.MyHeaderText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectScreen() {
+fun ProjectScreen(dnevnikId: String?) {
     val scrollState = rememberScrollState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
@@ -43,7 +43,7 @@ fun ProjectScreen() {
             TopAppBar(
                 modifier = Modifier.padding(vertical = 16.dp),
                 title = { Text(
-                    text = "Projekat: Izgradnja i rekonstrukcija poletno sletnih staza",
+                    text = "Projekat: #$dnevnikId",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.W800,
                     color = Color.White,

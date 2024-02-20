@@ -3,6 +3,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -77,6 +78,7 @@ dependencies {
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.44")
+    implementation("com.google.firebase:firebase-auth:22.3.1")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
 
 

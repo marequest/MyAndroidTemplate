@@ -68,7 +68,7 @@ fun DnevnikFormScreen(dnevnikId: String?) {
 
     Scaffold(
         topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior,
-            "$dnevnikId# Gradjevinski Dnevnik"
+            "Gradjevinski Dnevnik #$dnevnikId"
         ) },
         floatingActionButton = {
             Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.padding(0.dp)) {

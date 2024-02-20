@@ -12,10 +12,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.RemoveRedEye
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -40,7 +46,10 @@ import com.example.template.fakedata.Dnevnik
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun DnevniciScreen(onDnevnikClick: (Int) -> Unit = {}) {
+fun DnevniciScreen(
+    onDnevnikClick: (Int) -> Unit = {},
+    onDnevnikSettingsClick: (Int) -> Unit = {}
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val scrollState = rememberScrollState()
 
@@ -66,14 +75,18 @@ fun DnevniciScreen(onDnevnikClick: (Int) -> Unit = {}) {
                 .verticalScroll(scrollState)
         ) {
             for (dnevnik in DnevniciDataProvider.allDnevnici) {
-                DenvnikCard(dnevnik, onDnevnikClick = onDnevnikClick)
+                DenvnikCard(dnevnik, onDnevnikClick = onDnevnikClick, onDnevnikSettingsClick = onDnevnikSettingsClick)
             }
 
         }
     }
 }
 @Composable
-fun DenvnikCard(dnevnik: Dnevnik, onDnevnikClick: (Int) -> Unit = {}) {
+fun DenvnikCard(
+    dnevnik: Dnevnik,
+    onDnevnikClick: (Int) -> Unit = {},
+    onDnevnikSettingsClick: (Int) -> Unit = {}
+) {
     Card(
         modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
@@ -87,11 +100,24 @@ fun DenvnikCard(dnevnik: Dnevnik, onDnevnikClick: (Int) -> Unit = {}) {
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "#" + dnevnik.id.toString() + " " + dnevnik.projekat,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Row {
+                Text(
+                    text = "#" + dnevnik.id.toString() + " " + dnevnik.projekat,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(0.9f)
+                )
+                IconButton(
+                    modifier = Modifier.weight(0.1f),
+                    onClick = {
+                        onDnevnikSettingsClick(dnevnik.id.toInt())
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings"
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = dnevnik.grupaRadova,

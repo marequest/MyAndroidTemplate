@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "775125671605",
+    "project_id": "gradjevinskidnevnik",
+    "storage_bucket": "gradjevinskidnevnik.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:775125671605:android:602b956c0137f26f27a8fc",
+        "android_client_info": {
+          "package_name": "com.example.template"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxvF6JHWHTJ5GjSE-nKkxy-uzifGlzhgI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

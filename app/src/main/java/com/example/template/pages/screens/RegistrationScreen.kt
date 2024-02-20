@@ -4,7 +4,12 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -14,8 +19,17 @@ import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -27,31 +41,27 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.template.R
+import com.example.template.pages.elements.MyHeaderText
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
-//private lateinit var auth: FirebaseAuth
+
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LoginScreen(
-    onLoginSuccessful: () -> Unit = {},
-    goToRegistrationScreen: () -> Unit = {}
+fun RegistrationScreen(
+    onRegistrationSuccessful: () -> Unit = {},
+    goToLoginScreen: () -> Unit = {}
 ) {
-    //TODO
-//    auth = Firebase.auth
-//    val currentUser = auth.currentUser
-//    if(currentUser != null) {
-//        onLoginSuccessful()
-//    }
-
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordAgain by remember { mutableStateOf("") }
+
     var isPasswordVisible by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
 
@@ -71,6 +81,14 @@ fun LoginScreen(
             modifier = Modifier
                 .size(150.dp)
                 .padding(bottom = 16.dp)
+        )
+
+        Text(
+            text = "Create An Account",
+            modifier = Modifier
+                .fillMaxWidth(),
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
         )
 
         OutlinedTextField(
@@ -100,7 +118,7 @@ fun LoginScreen(
             trailingIcon = {
                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                     Icon(
-                        imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        imageVector = if (isPasswordVisible) Icons.Default.PersonAdd else Icons.Default.Warning,
                         contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
                     )
                 }
@@ -114,49 +132,52 @@ fun LoginScreen(
             singleLine = true
         )
 
-        val context = LocalContext.current
-        Text(
-            text = "Forgot your password?",
+        OutlinedTextField(
+            value = passwordAgain,
+            onValueChange = { passwordAgain = it },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)
-                .clickable {
-                    // Handle forgot password click
-                    showToast(context,"Forgot Password Clicked")
-                },
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.End
+                .padding(bottom = 8.dp),
+            label = { Text("Password Again") },
+            leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+            trailingIcon = {
+                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                    Icon(
+                        imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
+                    )
+                }
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            isError = showError && passwordAgain.isEmpty(),
+            singleLine = true
         )
+
+        val context = LocalContext.current
 
         Button(
             onClick = {
-                      showToast(context, "Log In clicked")
-//                if (email.isNotEmpty() && password.isNotEmpty()) {
-//                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-//                        if(it.isSuccessful){
-//                            showToast(context, "Successfully LoggedIn")
-//                        } else {
-//                            showToast(context, "Log In Failed")
-//                        }
-//                    }
-//                } else {
-//                    showToast(context, "Fill In Password And Email")
-//                }
-                onLoginSuccessful() //TODO
+                      showToast(context, "Create account clicked")
+//                onRegistrationSuccessful()
+//                TODO Create an account
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
         ) {
-            Text("Log in")
+            Text("Create Account")
         }
 
         Text(
-            text = "Create Account",
+            text = "Already have an account?",
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    goToRegistrationScreen()
+                    goToLoginScreen()
                 },
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center
@@ -164,13 +185,3 @@ fun LoginScreen(
     }
 }
 
-
-fun showToast(context: Context, message: String) {
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen()
-}

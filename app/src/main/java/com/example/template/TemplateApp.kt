@@ -41,6 +41,7 @@ import com.example.template.pages.screens.LoginScreen
 import com.example.template.pages.screens.ProfileScreen
 import com.example.template.pages.screens.DnevniciScreen
 import com.example.template.pages.screens.ProjectScreen
+import com.example.template.pages.screens.RegistrationScreen
 import com.example.template.utils.ContentType
 import com.example.template.utils.DevicePosture
 import com.example.template.utils.NavigationType
@@ -129,7 +130,7 @@ private fun TemplateNavigationWrapperUI(
         TemplateNavigationActions(navController)
     }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val selectedDestination = navBackStackEntry?.destination?.route ?: NavDestinations.DNEVNICI_SCREEN
+    val selectedDestination = navBackStackEntry?.destination?.route ?: NavDestinations.DNEVNICI_LIST_SCREEN
 
     if (navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER && homeUIState.loggedIn) {
         PermanentNavigationDrawer(
@@ -227,6 +228,9 @@ fun TemplateAppContent(
                     navigateToTopLevelDestination(TOP_LEVEL_DESTINATIONS[0])
                     viewModel.logIn()
                 },
+                onRegistrationSuccessful = {
+
+                },
                 selectedDestination = selectedDestination,
                 modifier = Modifier.weight(1f)
             )
@@ -250,6 +254,7 @@ fun TemplateNavHost(
     homeUIState: HomeUIState,
     contentType: ContentType,
     onLoginSuccessful: () -> Unit = {},
+    onRegistrationSuccessful: () -> Unit = {},
     selectedDestination: String,
     modifier: Modifier
 ) {
@@ -269,22 +274,42 @@ fun TemplateNavHost(
             LoginScreen(
                 onLoginSuccessful = {
                     onLoginSuccessful()
+                },
+                goToRegistrationScreen = {
+                    navigationActions.navigateTo(NavDestinations.REGISTRATION_SCREEN)
                 }
             )
         }
-        composable(NavDestinations.DNEVNICI_SCREEN) {
-            DnevniciScreen(onDnevnikClick = {dnevnikId ->
-                dnevnikViewModel.setDnevnikId(dnevnikId.toString())
-                navigateToTopLevelDestination(TOP_LEVEL_DESTINATIONS[2])
-            })
+        composable(NavDestinations.REGISTRATION_SCREEN){
+            RegistrationScreen(
+                onRegistrationSuccessful = {
+                    onRegistrationSuccessful()
+                },
+                goToLoginScreen = {
+                    navigationActions.navigateTo(NavDestinations.LOGIN)
+                }
+            )
         }
-        composable(NavDestinations.PROJECT_SCREEN) {
-            ProjectScreen()
+
+        composable(NavDestinations.DNEVNICI_LIST_SCREEN) {
+            DnevniciScreen(
+                onDnevnikClick = {dnevnikId ->
+                    dnevnikViewModel.setDnevnikId(dnevnikId.toString())
+                    navigationActions.navigateTo(NavDestinations.DNEVNIK_FORM_SCREEN)
+                },
+                onDnevnikSettingsClick = {dnevnikId ->
+                    dnevnikViewModel.setDnevnikId(dnevnikId.toString())
+                    navigationActions.navigateTo(NavDestinations.DNEVNIK_SETTINGS_SCREEN)
+                }
+            )
+        }
+        composable(NavDestinations.DNEVNIK_SETTINGS_SCREEN) {
+            ProjectScreen(dnevnikViewModel.uiState.collectAsState().value.dnevnikId)
         }
         composable(NavDestinations.DNEVNIK_FORM_SCREEN) {
             DnevnikFormScreen(dnevnikViewModel.uiState.collectAsState().value.dnevnikId)
         }
-        composable(NavDestinations.PROFILE) {
+        composable(NavDestinations.PROFILE_SCREEN) {
             ProfileScreen()
         }
     }

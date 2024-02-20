@@ -17,15 +17,9 @@
 package com.example.template.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Article
-import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Today
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Preview
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -34,10 +28,11 @@ import com.example.template.R
 
 object NavDestinations {
     const val LOGIN = "Login"
-    const val DNEVNICI_SCREEN = "DnevniciScreen"
-    const val PROJECT_SCREEN = "ProjectScreen"
+    const val REGISTRATION_SCREEN = "RegistrationScreen"
+    const val DNEVNICI_LIST_SCREEN = "DnevniciListScreen"
+    const val DNEVNIK_SETTINGS_SCREEN = "DnevnikSettingsScreen"
     const val DNEVNIK_FORM_SCREEN = "DnevniciFormScreen/{dnevnikId}"
-    const val PROFILE = "Profile"
+    const val PROFILE_SCREEN = "ProfileScreen"
 
 }
 data class TemplateTopLevelDestination(
@@ -77,18 +72,27 @@ class TemplateNavigationActions(private val navController: NavHostController) {
             restoreState = true
         }
     }
+    fun navigateTo(route: String) {
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
 }
 
 
 val TOP_LEVEL_DESTINATIONS = listOf(
     TemplateTopLevelDestination(
-        route = NavDestinations.DNEVNICI_SCREEN,
+        route = NavDestinations.DNEVNICI_LIST_SCREEN,
         selectedIcon = Icons.Default.List,
         unselectedIcon = Icons.Default.List,
         iconTextId = R.string.dnevnici
     ),
     TemplateTopLevelDestination(
-        route = NavDestinations.PROJECT_SCREEN,
+        route = NavDestinations.DNEVNIK_SETTINGS_SCREEN,
         selectedIcon = Icons.Outlined.Preview,
         unselectedIcon = Icons.Outlined.Preview,
         iconTextId = R.string.projekat
@@ -100,7 +104,7 @@ val TOP_LEVEL_DESTINATIONS = listOf(
         iconTextId = R.string.dnevnik
     ),
     TemplateTopLevelDestination(
-        route = NavDestinations.PROFILE,
+        route = NavDestinations.PROFILE_SCREEN,
         selectedIcon = Icons.Default.Person,
         unselectedIcon = Icons.Default.Person,
         iconTextId = R.string.profile

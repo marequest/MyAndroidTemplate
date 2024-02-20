@@ -18,6 +18,9 @@ import com.example.template.ui.theme.TemplateTheme
 import com.example.template.viewmodels.HomeUIState
 import com.example.template.viewmodels.TemplateHomeViewModel
 import com.google.accompanist.adaptive.calculateDisplayFeatures
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 
 class MainActivity : ComponentActivity() {
@@ -28,10 +31,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
         installSplashScreen()
-
         enableEdgeToEdge()
-
         super.onCreate(savedInstanceState)
+
 
         setContent {
             TemplateTheme {
