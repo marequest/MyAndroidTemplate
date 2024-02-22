@@ -263,7 +263,7 @@ fun TemplateNavHost(
     val dnevnikViewModel: DnevnikScreenViewModel = viewModel()
     val dnevniciListScreenViewModel: DnevniciListScreenViewModel = viewModel()
     val projectScreenViewModel: ProjectScreenViewModel = viewModel()
-    val profileScreenViewModel: ProfileScreenViewModel = viewModel()
+    val profileScreenViewModel: ProfileScreenViewModel = viewModel(factory = ProfileScreenViewModel.Factory)
 
     NavHost(
         modifier = modifier,

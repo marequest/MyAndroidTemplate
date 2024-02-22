@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.example.template.fakedata.DnevniciDataProvider
 import com.example.template.fakedata.Dnevnik
+import com.example.template.makeStatusNotification
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -78,6 +79,10 @@ fun DnevniciListScreen(
                 onClick = {
                     // Add your save action here
                           showToast(context, "New dnevnik clicked!")
+                    makeStatusNotification(
+                        "Status notifikacija",
+                        context
+                    )
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = Color.White),
                 modifier = Modifier.fillMaxWidth().padding(8.dp)

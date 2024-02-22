@@ -3,6 +3,9 @@ package com.example.template.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +20,14 @@ class ProfileScreenViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState(loading = true))
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                // Moze da se napravi neki repository npr i prosledi u viewmodel
+                ProfileScreenViewModel()
+            }
+        }
+    }
 
     fun setDnevnikId(newId: String?) {
         _uiState.update { it.copy(loading = true) }
