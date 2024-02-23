@@ -52,6 +52,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Preview(showBackground = true)
 @Composable

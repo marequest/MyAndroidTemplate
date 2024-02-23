@@ -29,12 +29,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.template.R
+import com.example.template.viewmodels.LoginViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-
-//private lateinit var auth: FirebaseAuth
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -48,7 +48,7 @@ fun LoginScreen(
 //    if(currentUser != null) {
 //        onLoginSuccessful()
 //    }
-
+    val loginViewModel: LoginViewModel = viewModel()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -142,6 +142,7 @@ fun LoginScreen(
 //                } else {
 //                    showToast(context, "Fill In Password And Email")
 //                }
+
                 onLoginSuccessful() //TODO
             },
             modifier = Modifier
