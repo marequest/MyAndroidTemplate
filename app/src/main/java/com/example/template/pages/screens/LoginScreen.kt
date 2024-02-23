@@ -2,6 +2,7 @@ package com.example.template.pages.screens
 
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -31,24 +32,38 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.template.R
+import com.example.template.pages.elements.DimmedLoadingIndicator
+import com.example.template.viewmodels.LoginState
 import com.example.template.viewmodels.LoginViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
+    loginViewModel: LoginViewModel,
     onLoginSuccessful: () -> Unit = {},
     goToRegistrationScreen: () -> Unit = {}
 ) {
-    //TODO
-//    auth = Firebase.auth
-//    val currentUser = auth.currentUser
-//    if(currentUser != null) {
-//        onLoginSuccessful()
-//    }
-    val loginViewModel: LoginViewModel = viewModel()
+    // TODO check if current user is logged in already
+
+
+    val loginState by loginViewModel.loginState.collectAsState()
+    when (loginState) {
+        is LoginState.Success -> {
+            LaunchedEffect(Unit) { // This ensures that `onLoginSuccessful` is called only once
+                onLoginSuccessful()
+            }
+        }
+        is LoginState.Error -> {
+            val errorMessage = (loginState as LoginState.Error).message
+            Toast.makeText(LocalContext.current, errorMessage, Toast.LENGTH_LONG).show()
+        }
+        is LoginState.Loading -> {
+            DimmedLoadingIndicator()
+        }
+        is LoginState.Idle -> {
+
+        }
+    }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -130,20 +145,11 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                      showToast(context, "Log In clicked")
-//                if (email.isNotEmpty() && password.isNotEmpty()) {
-//                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-//                        if(it.isSuccessful){
-//                            showToast(context, "Successfully LoggedIn")
-//                        } else {
-//                            showToast(context, "Log In Failed")
-//                        }
-//                    }
-//                } else {
-//                    showToast(context, "Fill In Password And Email")
-//                }
-
-                onLoginSuccessful() //TODO
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    loginViewModel.login(email, password)
+                } else {
+                    showToast(context, "Fill In Password And Email")
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -168,10 +174,4 @@ fun LoginScreen(
 
 fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen()
 }

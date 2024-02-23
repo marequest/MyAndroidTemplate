@@ -1,7 +1,7 @@
 plugins {
+    id("com.android.application")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
-    id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
 }
@@ -77,9 +77,9 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    implementation("com.google.firebase:firebase-auth:22.3.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("com.google.dagger:hilt-android:2.50")
+    kapt("com.google.dagger:hilt-android-compiler:2.50")
+//    kapt("com.google.dagger:hilt-compiler:2.50")
 
 
     implementation("androidx.navigation:navigation-compose:2.7.6")

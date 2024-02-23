@@ -16,16 +16,17 @@ import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.template.ui.theme.TemplateTheme
 import com.example.template.viewmodels.HomeUIState
+import com.example.template.viewmodels.LoginViewModel
 import com.example.template.viewmodels.TemplateHomeViewModel
 import com.google.accompanist.adaptive.calculateDisplayFeatures
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: TemplateHomeViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
+
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
 
                 TemplateApp(
                     viewModel = viewModel,
+                    loginViewModel = loginViewModel,
                     homeUIState = uiState,
                     windowSize = windowSize,
                     displayFeatures = displayFeatures
@@ -54,72 +56,72 @@ class MainActivity : ComponentActivity() {
 
 
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Preview(showBackground = true)
-@Composable
-fun TemplateAppPreview() {
-    TemplateTheme {
-        TemplateApp(
-            viewModel = TemplateHomeViewModel(),
-            homeUIState = HomeUIState(),
-            windowSize = WindowSizeClass.calculateFromSize(DpSize(400.dp, 900.dp)),
-            displayFeatures = emptyList(),
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Preview(showBackground = true, widthDp = 700, heightDp = 500)
-@Composable
-fun TemplateAppPreviewTablet() {
-    TemplateTheme {
-        TemplateApp(
-            viewModel = TemplateHomeViewModel(),
-            homeUIState = HomeUIState(),
-            windowSize = WindowSizeClass.calculateFromSize(DpSize(700.dp, 500.dp)),
-            displayFeatures = emptyList(),
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Preview(showBackground = true, widthDp = 500, heightDp = 700)
-@Composable
-fun TemplateAppPreviewPortrait() {
-    TemplateTheme {
-        TemplateApp(
-            viewModel = TemplateHomeViewModel(),
-            homeUIState = HomeUIState(),
-            windowSize = WindowSizeClass.calculateFromSize(DpSize(500.dp, 700.dp)),
-            displayFeatures = emptyList(),
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Preview(showBackground = true, widthDp = 1100, heightDp = 600)
-@Composable
-fun TemplateAppPreviewDesktop() {
-    TemplateTheme {
-        TemplateApp(
-            viewModel = TemplateHomeViewModel(),
-            homeUIState = HomeUIState(),
-            windowSize = WindowSizeClass.calculateFromSize(DpSize(1100.dp, 600.dp)),
-            displayFeatures = emptyList(),
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Preview(showBackground = true, widthDp = 600, heightDp = 1100)
-@Composable
-fun TemplateAppPreviewDesktopPortrait() {
-    TemplateTheme {
-        TemplateApp(
-            viewModel = TemplateHomeViewModel(),
-            homeUIState = HomeUIState(),
-            windowSize = WindowSizeClass.calculateFromSize(DpSize(600.dp, 1100.dp)),
-            displayFeatures = emptyList(),
-        )
-    }
-}
+//@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+//@Preview(showBackground = true)
+//@Composable
+//fun TemplateAppPreview() {
+//    TemplateTheme {
+//        TemplateApp(
+//            viewModel = TemplateHomeViewModel(),
+//            homeUIState = HomeUIState(),
+//            windowSize = WindowSizeClass.calculateFromSize(DpSize(400.dp, 900.dp)),
+//            displayFeatures = emptyList(),
+//        )
+//    }
+//}
+//
+//@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+//@Preview(showBackground = true, widthDp = 700, heightDp = 500)
+//@Composable
+//fun TemplateAppPreviewTablet() {
+//    TemplateTheme {
+//        TemplateApp(
+//            viewModel = TemplateHomeViewModel(),
+//            homeUIState = HomeUIState(),
+//            windowSize = WindowSizeClass.calculateFromSize(DpSize(700.dp, 500.dp)),
+//            displayFeatures = emptyList(),
+//        )
+//    }
+//}
+//
+//@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+//@Preview(showBackground = true, widthDp = 500, heightDp = 700)
+//@Composable
+//fun TemplateAppPreviewPortrait() {
+//    TemplateTheme {
+//        TemplateApp(
+//            viewModel = TemplateHomeViewModel(),
+//            homeUIState = HomeUIState(),
+//            windowSize = WindowSizeClass.calculateFromSize(DpSize(500.dp, 700.dp)),
+//            displayFeatures = emptyList(),
+//        )
+//    }
+//}
+//
+//@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+//@Preview(showBackground = true, widthDp = 1100, heightDp = 600)
+//@Composable
+//fun TemplateAppPreviewDesktop() {
+//    TemplateTheme {
+//        TemplateApp(
+//            viewModel = TemplateHomeViewModel(),
+//            homeUIState = HomeUIState(),
+//            windowSize = WindowSizeClass.calculateFromSize(DpSize(1100.dp, 600.dp)),
+//            displayFeatures = emptyList(),
+//        )
+//    }
+//}
+//
+//@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+//@Preview(showBackground = true, widthDp = 600, heightDp = 1100)
+//@Composable
+//fun TemplateAppPreviewDesktopPortrait() {
+//    TemplateTheme {
+//        TemplateApp(
+//            viewModel = TemplateHomeViewModel(),
+//            homeUIState = HomeUIState(),
+//            windowSize = WindowSizeClass.calculateFromSize(DpSize(600.dp, 1100.dp)),
+//            displayFeatures = emptyList(),
+//        )
+//    }
+//}

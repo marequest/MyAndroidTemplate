@@ -50,6 +50,7 @@ import com.example.template.ui.utils.isSeparating
 import com.example.template.viewmodels.DnevniciListScreenViewModel
 import com.example.template.viewmodels.DnevnikScreenViewModel
 import com.example.template.viewmodels.HomeUIState
+import com.example.template.viewmodels.LoginViewModel
 import com.example.template.viewmodels.ProfileScreenViewModel
 import com.example.template.viewmodels.ProjectScreenViewModel
 import com.example.template.viewmodels.TemplateHomeViewModel
@@ -59,6 +60,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TemplateApp(
     viewModel: TemplateHomeViewModel,
+    loginViewModel: LoginViewModel,
     homeUIState: HomeUIState,
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>
@@ -109,7 +111,13 @@ fun TemplateApp(
         }
     }
 
-    TemplateNavigationWrapperUI(viewModel, navigationType, contentType, homeUIState)
+    TemplateNavigationWrapperUI(
+        viewModel,
+        loginViewModel,
+        navigationType,
+        contentType,
+        homeUIState
+    )
 }
 
 
@@ -118,6 +126,7 @@ fun TemplateApp(
 @Composable
 private fun TemplateNavigationWrapperUI(
     viewModel: TemplateHomeViewModel,
+    loginViewModel: LoginViewModel,
     navigationType: NavigationType,
     contentType: ContentType,
     homeUIState: HomeUIState
@@ -145,6 +154,7 @@ private fun TemplateNavigationWrapperUI(
         ) {
             TemplateAppContent(
                 viewModel = viewModel,
+                loginViewModel = loginViewModel,
                 navController = navController,
                 navigationType = navigationType,
                 selectedDestination = selectedDestination,
@@ -173,6 +183,7 @@ private fun TemplateNavigationWrapperUI(
         ) {
             TemplateAppContent(
                 viewModel = viewModel,
+                loginViewModel = loginViewModel,
                 navController = navController,
                 navigationType = navigationType,
                 selectedDestination = selectedDestination,
@@ -194,6 +205,7 @@ private fun TemplateNavigationWrapperUI(
 @Composable
 fun TemplateAppContent(
     viewModel: TemplateHomeViewModel,
+    loginViewModel: LoginViewModel,
     navController: NavHostController,
     navigationType: NavigationType,
     selectedDestination: String,
@@ -218,6 +230,7 @@ fun TemplateAppContent(
         ) {
             TemplateNavHost(
                 templateViewModel = viewModel,
+                loginViewModel = loginViewModel,
                 navController = navController,
                 navigationActions = navigationActions,
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
@@ -248,6 +261,7 @@ fun TemplateAppContent(
 @Composable
 fun TemplateNavHost(
     templateViewModel: TemplateHomeViewModel,
+    loginViewModel: LoginViewModel,
     navController: NavHostController,
     navigationActions: TemplateNavigationActions,
     navigateToTopLevelDestination: (TemplateTopLevelDestination) -> Unit,
@@ -272,6 +286,7 @@ fun TemplateNavHost(
     ) {
         composable(NavDestinations.LOGIN){
             LoginScreen(
+                loginViewModel = loginViewModel,
                 onLoginSuccessful = {
                     onLoginSuccessful()
                 },
