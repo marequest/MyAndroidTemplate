@@ -49,19 +49,15 @@ import com.example.template.ui.utils.isBookPosture
 import com.example.template.ui.utils.isSeparating
 import com.example.template.viewmodels.DnevniciListScreenViewModel
 import com.example.template.viewmodels.DnevnikScreenViewModel
-import com.example.template.viewmodels.HomeUIState
 import com.example.template.viewmodels.LoginViewModel
 import com.example.template.viewmodels.ProfileScreenViewModel
 import com.example.template.viewmodels.ProjectScreenViewModel
-import com.example.template.viewmodels.TemplateHomeViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TemplateApp(
-    viewModel: TemplateHomeViewModel,
     loginViewModel: LoginViewModel,
-    homeUIState: HomeUIState,
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>
 ) {
@@ -112,11 +108,9 @@ fun TemplateApp(
     }
 
     TemplateNavigationWrapperUI(
-        viewModel,
         loginViewModel,
         navigationType,
         contentType,
-        homeUIState
     )
 }
 
@@ -125,11 +119,9 @@ fun TemplateApp(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TemplateNavigationWrapperUI(
-    viewModel: TemplateHomeViewModel,
     loginViewModel: LoginViewModel,
     navigationType: NavigationType,
     contentType: ContentType,
-    homeUIState: HomeUIState
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -141,7 +133,7 @@ private fun TemplateNavigationWrapperUI(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val selectedDestination = navBackStackEntry?.destination?.route ?: NavDestinations.DNEVNICI_LIST_SCREEN
 
-    if (navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER && homeUIState.loggedIn) {
+    if (navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
         PermanentNavigationDrawer(
             drawerContent = {
                 PermanentDrawerSheet {
@@ -153,7 +145,6 @@ private fun TemplateNavigationWrapperUI(
             }
         ) {
             TemplateAppContent(
-                viewModel = viewModel,
                 loginViewModel = loginViewModel,
                 navController = navController,
                 navigationType = navigationType,
@@ -161,7 +152,6 @@ private fun TemplateNavigationWrapperUI(
                 navigationActions = navigationActions,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
                 contentType = contentType,
-                homeUIState = homeUIState
             )
         }
     } else {
@@ -182,7 +172,6 @@ private fun TemplateNavigationWrapperUI(
             drawerState = drawerState
         ) {
             TemplateAppContent(
-                viewModel = viewModel,
                 loginViewModel = loginViewModel,
                 navController = navController,
                 navigationType = navigationType,
@@ -190,7 +179,6 @@ private fun TemplateNavigationWrapperUI(
                 navigationActions = navigationActions,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
                 contentType = contentType,
-                homeUIState = homeUIState,
                 onDrawerClicked = {
                     scope.launch {
                         drawerState.open()
@@ -204,7 +192,6 @@ private fun TemplateNavigationWrapperUI(
 
 @Composable
 fun TemplateAppContent(
-    viewModel: TemplateHomeViewModel,
     loginViewModel: LoginViewModel,
     navController: NavHostController,
     navigationType: NavigationType,
@@ -212,12 +199,11 @@ fun TemplateAppContent(
     navigationActions: TemplateNavigationActions,
     navigateToTopLevelDestination: (TemplateTopLevelDestination) -> Unit,
     contentType: ContentType,
-    homeUIState: HomeUIState,
     onDrawerClicked: () -> Unit = {}
 ) {
 
     Row(modifier = Modifier.fillMaxSize()) {
-        AnimatedVisibility(visible = (navigationType == NavigationType.NAVIGATION_RAIL && homeUIState.loggedIn)) {
+        AnimatedVisibility(visible = (navigationType == NavigationType.NAVIGATION_RAIL)) {
             TemplateNavigationRail(
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
@@ -229,17 +215,14 @@ fun TemplateAppContent(
             .background(MaterialTheme.colorScheme.inverseOnSurface)
         ) {
             TemplateNavHost(
-                templateViewModel = viewModel,
                 loginViewModel = loginViewModel,
                 navController = navController,
                 navigationActions = navigationActions,
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
-                homeUIState = homeUIState,
                 contentType = contentType,
                 onLoginSuccessful =
                 {
                     navigateToTopLevelDestination(TOP_LEVEL_DESTINATIONS[0])
-                    viewModel.logIn()
                 },
                 onRegistrationSuccessful = {
 
@@ -248,7 +231,7 @@ fun TemplateAppContent(
                 modifier = Modifier.weight(1f)
             )
 
-            AnimatedVisibility(visible = (navigationType == NavigationType.BOTTOM_NAVIGATION && homeUIState.loggedIn)) {
+            AnimatedVisibility(visible = (navigationType == NavigationType.BOTTOM_NAVIGATION)) {
                 TemplateBottomNavigationBar(
                     selectedDestination = selectedDestination,
                     navigateToTopLevelDestination = navigateToTopLevelDestination
@@ -260,19 +243,18 @@ fun TemplateAppContent(
 
 @Composable
 fun TemplateNavHost(
-    templateViewModel: TemplateHomeViewModel,
     loginViewModel: LoginViewModel,
     navController: NavHostController,
     navigationActions: TemplateNavigationActions,
     navigateToTopLevelDestination: (TemplateTopLevelDestination) -> Unit,
-    homeUIState: HomeUIState,
     contentType: ContentType,
     onLoginSuccessful: () -> Unit = {},
     onRegistrationSuccessful: () -> Unit = {},
     selectedDestination: String,
     modifier: Modifier
 ) {
-    val startDestination = if (!homeUIState.loggedIn) NavDestinations.LOGIN else selectedDestination
+//    val startDestination = if (!homeUIState.loggedIn) NavDestinations.LOGIN else selectedDestination // TODO
+    val startDestination = NavDestinations.LOGIN
 
     val dnevnikViewModel: DnevnikScreenViewModel = viewModel()
     val dnevniciListScreenViewModel: DnevniciListScreenViewModel = viewModel()

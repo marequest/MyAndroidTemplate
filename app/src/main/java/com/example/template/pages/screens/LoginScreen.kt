@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.template.R
 import com.example.template.pages.elements.DimmedLoadingIndicator
+import com.example.template.pages.elements.showToast
 import com.example.template.viewmodels.LoginState
 import com.example.template.viewmodels.LoginViewModel
 
@@ -148,6 +149,7 @@ fun LoginScreen(
                 if (email.isNotEmpty() && password.isNotEmpty()) {
                     loginViewModel.login(email, password)
                 } else {
+                    loginViewModel.login("test", "test") // TODO remove
                     showToast(context, "Fill In Password And Email")
                 }
             },
@@ -172,6 +174,3 @@ fun LoginScreen(
 }
 
 
-fun showToast(context: Context, message: String) {
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-}

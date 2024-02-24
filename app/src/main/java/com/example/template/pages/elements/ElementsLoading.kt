@@ -1,5 +1,7 @@
 package com.example.template.pages.elements
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,4 +36,8 @@ fun DimmedLoadingIndicator() {
             )
         }
     }
+}
+
+fun showToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }

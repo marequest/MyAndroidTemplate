@@ -15,16 +15,13 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.template.ui.theme.TemplateTheme
-import com.example.template.viewmodels.HomeUIState
 import com.example.template.viewmodels.LoginViewModel
-import com.example.template.viewmodels.TemplateHomeViewModel
 import com.google.accompanist.adaptive.calculateDisplayFeatures
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: TemplateHomeViewModel by viewModels()
     private val loginViewModel: LoginViewModel by viewModels()
 
 
@@ -39,13 +36,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             TemplateTheme {
                 val windowSize = calculateWindowSizeClass(activity = this)
-                val uiState = viewModel.uiState.collectAsState().value
                 val displayFeatures = calculateDisplayFeatures(this)
 
                 TemplateApp(
-                    viewModel = viewModel,
                     loginViewModel = loginViewModel,
-                    homeUIState = uiState,
                     windowSize = windowSize,
                     displayFeatures = displayFeatures
                 )

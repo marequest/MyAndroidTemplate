@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.example.template.fakedata.DnevniciDataProvider
 import com.example.template.fakedata.Dnevnik
 import com.example.template.makeStatusNotification
+import com.example.template.pages.elements.showToast
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable

@@ -11,6 +11,7 @@ import com.example.network.network.RetrofitClient
 import com.example.network.network.UserSessionRepository
 import com.example.network.network.data.LoginRequest
 import com.example.network.network.data.TokenZeroRequest
+import com.example.network.network.dump.ApiService
 import com.example.network.network.helpers.generateSalt
 import com.example.network.network.helpers.getTokenZero
 import com.example.network.network.helpers.hashPassword
@@ -43,6 +44,7 @@ sealed interface TokenRenewalState {
 class LoginViewModel @Inject constructor(
     private val userSessionRepository: UserSessionRepository
 ) : ViewModel() {
+    private val authService = RetrofitClient.getRetrofitInstance().create(AuthService::class.java)
 
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState
@@ -50,12 +52,11 @@ class LoginViewModel @Inject constructor(
     private val _tokenRenewalState = MutableStateFlow<TokenRenewalState>(TokenRenewalState.Idle)
     val tokenRenewalState: StateFlow<TokenRenewalState> = _tokenRenewalState
 
+
     fun login(username: String, password: String) = viewModelScope.launch {
         if(IS_TEST) {
             _loginState.value = LoginState.Loading
-
             delay(2000)
-
             _loginState.value = LoginState.Success
 
         } else {
@@ -64,7 +65,6 @@ class LoginViewModel @Inject constructor(
                 val tokenZero = hashPassword(password, salt)
                 userSessionRepository.storeTokenZero(tokenZero)
 
-                val authService = RetrofitClient.getRetrofitInstance().create(AuthService::class.java)
                 val loginRequest = LoginRequest(username, password, salt)
 
                 val response = authService.loginUser(loginRequest)
@@ -86,9 +86,7 @@ class LoginViewModel @Inject constructor(
     fun renewAccessToken() = viewModelScope.launch {
         if(IS_TEST) {
             _tokenRenewalState.value = TokenRenewalState.Loading
-
             delay(3000)
-
             _tokenRenewalState.value = TokenRenewalState.Success
 
         } else {
@@ -102,7 +100,6 @@ class LoginViewModel @Inject constructor(
                     return@launch
                 }
 
-                val authService = RetrofitClient.getRetrofitInstance().create(AuthService::class.java)
                 val tokenZeroRequest = TokenZeroRequest(tokenZero)
 
                 val response = authService.renewAccessToken(tokenZeroRequest)
