@@ -1,23 +1,14 @@
 package com.example.template.viewmodels
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.network.network.AuthService
+import com.example.network.network.services.AuthService
 import com.example.network.network.RetrofitClient
-import com.example.network.network.UserSessionRepository
+import com.example.network.network.repositories.UserSessionRepository
 import com.example.network.network.data.LoginRequest
 import com.example.network.network.data.TokenZeroRequest
-import com.example.network.network.dump.ApiService
 import com.example.network.network.helpers.generateSalt
-import com.example.network.network.helpers.getTokenZero
 import com.example.network.network.helpers.hashPassword
-import com.example.network.network.helpers.storeLoginDetails
-import com.example.network.network.helpers.storeTokenAndExpiryTime
-import com.example.network.network.helpers.storeTokenZero
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

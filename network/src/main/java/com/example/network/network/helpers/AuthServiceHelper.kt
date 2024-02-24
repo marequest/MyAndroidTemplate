@@ -9,11 +9,16 @@ import retrofit2.Response
 import java.security.MessageDigest
 import java.security.SecureRandom
 
-fun isTokenValid(context: Context): Boolean {
-    val triple = getLoginDetails(context)
-    val expiryTime = triple.third
-    return System.currentTimeMillis() < expiryTime!!
+fun isTokenValid(context: Context, expiryTime: Long): Boolean {
+    return System.currentTimeMillis() < expiryTime
 }
+
+//fun isTokenValid(context: Context): Boolean {
+//    val triple = getLoginDetails(context)
+//    val expiryTime = triple.third
+//    return System.currentTimeMillis() < expiryTime!!
+//}
+
 
 fun generateSalt(): String {
     val bytes = ByteArray(16)

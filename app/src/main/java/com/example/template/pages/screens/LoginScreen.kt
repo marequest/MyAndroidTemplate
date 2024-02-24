@@ -44,8 +44,6 @@ fun LoginScreen(
     onLoginSuccessful: () -> Unit = {},
     goToRegistrationScreen: () -> Unit = {}
 ) {
-    // TODO check if current user is logged in already
-
 
     val loginState by loginViewModel.loginState.collectAsState()
     when (loginState) {

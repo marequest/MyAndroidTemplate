@@ -1,27 +1,13 @@
-package com.example.network.network
+package com.example.network.network.services
 
-import android.content.Context
 import com.example.network.network.data.LoginRequest
 import com.example.network.network.data.LoginResponse
 import com.example.network.network.data.TokenZeroRequest
 import com.example.network.network.data.TokenZeroResponse
-import com.example.network.network.helpers.generateSalt
-import com.example.network.network.helpers.getTokenZero
-import com.example.network.network.helpers.handleErrorResponse
-import com.example.network.network.helpers.hashPassword
-import com.example.network.network.helpers.isTokenValid
-import com.example.network.network.helpers.storeLoginDetails
-import com.example.network.network.helpers.storeTokenAndExpiryTime
-import com.example.network.network.helpers.storeTokenZero
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.PUT
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 
 interface AuthService {

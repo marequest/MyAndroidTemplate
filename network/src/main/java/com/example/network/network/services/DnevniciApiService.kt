@@ -1,4 +1,4 @@
-package com.example.network.network
+package com.example.network.network.services
 
 import retrofit2.http.GET
 

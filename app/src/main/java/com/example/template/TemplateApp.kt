@@ -58,6 +58,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun TemplateApp(
     loginViewModel: LoginViewModel,
+    dnevnikViewModel: DnevnikScreenViewModel,
+    dnevniciListScreenViewModel: DnevniciListScreenViewModel,
+    projectScreenViewModel: ProjectScreenViewModel,
+    profileScreenViewModel: ProfileScreenViewModel,
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>
 ) {
@@ -108,9 +112,13 @@ fun TemplateApp(
     }
 
     TemplateNavigationWrapperUI(
-        loginViewModel,
-        navigationType,
-        contentType,
+        loginViewModel = loginViewModel,
+        dnevnikViewModel = dnevnikViewModel,
+        dnevniciListScreenViewModel = dnevniciListScreenViewModel,
+        projectScreenViewModel = projectScreenViewModel,
+        profileScreenViewModel = profileScreenViewModel,
+        navigationType = navigationType,
+        contentType = contentType,
     )
 }
 
@@ -120,6 +128,10 @@ fun TemplateApp(
 @Composable
 private fun TemplateNavigationWrapperUI(
     loginViewModel: LoginViewModel,
+    dnevnikViewModel: DnevnikScreenViewModel,
+    dnevniciListScreenViewModel: DnevniciListScreenViewModel,
+    projectScreenViewModel: ProjectScreenViewModel,
+    profileScreenViewModel: ProfileScreenViewModel,
     navigationType: NavigationType,
     contentType: ContentType,
 ) {
@@ -146,6 +158,10 @@ private fun TemplateNavigationWrapperUI(
         ) {
             TemplateAppContent(
                 loginViewModel = loginViewModel,
+                dnevnikViewModel = dnevnikViewModel,
+                dnevniciListScreenViewModel = dnevniciListScreenViewModel,
+                projectScreenViewModel = projectScreenViewModel,
+                profileScreenViewModel = profileScreenViewModel,
                 navController = navController,
                 navigationType = navigationType,
                 selectedDestination = selectedDestination,
@@ -173,6 +189,10 @@ private fun TemplateNavigationWrapperUI(
         ) {
             TemplateAppContent(
                 loginViewModel = loginViewModel,
+                dnevnikViewModel = dnevnikViewModel,
+                dnevniciListScreenViewModel = dnevniciListScreenViewModel,
+                projectScreenViewModel = projectScreenViewModel,
+                profileScreenViewModel = profileScreenViewModel,
                 navController = navController,
                 navigationType = navigationType,
                 selectedDestination = selectedDestination,
@@ -193,6 +213,10 @@ private fun TemplateNavigationWrapperUI(
 @Composable
 fun TemplateAppContent(
     loginViewModel: LoginViewModel,
+    dnevnikViewModel: DnevnikScreenViewModel,
+    dnevniciListScreenViewModel: DnevniciListScreenViewModel,
+    projectScreenViewModel: ProjectScreenViewModel,
+    profileScreenViewModel: ProfileScreenViewModel,
     navController: NavHostController,
     navigationType: NavigationType,
     selectedDestination: String,
@@ -216,6 +240,10 @@ fun TemplateAppContent(
         ) {
             TemplateNavHost(
                 loginViewModel = loginViewModel,
+                dnevnikViewModel = dnevnikViewModel,
+                dnevniciListScreenViewModel = dnevniciListScreenViewModel,
+                projectScreenViewModel = projectScreenViewModel,
+                profileScreenViewModel = profileScreenViewModel,
                 navController = navController,
                 navigationActions = navigationActions,
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
@@ -244,6 +272,10 @@ fun TemplateAppContent(
 @Composable
 fun TemplateNavHost(
     loginViewModel: LoginViewModel,
+    dnevnikViewModel: DnevnikScreenViewModel,
+    dnevniciListScreenViewModel: DnevniciListScreenViewModel,
+    projectScreenViewModel: ProjectScreenViewModel,
+    profileScreenViewModel: ProfileScreenViewModel,
     navController: NavHostController,
     navigationActions: TemplateNavigationActions,
     navigateToTopLevelDestination: (TemplateTopLevelDestination) -> Unit,
@@ -253,13 +285,9 @@ fun TemplateNavHost(
     selectedDestination: String,
     modifier: Modifier
 ) {
-//    val startDestination = if (!homeUIState.loggedIn) NavDestinations.LOGIN else selectedDestination // TODO
+    // TODO check if current user is logged in already
+//    val startDestination = if (!homeUIState.loggedIn) NavDestinations.LOGIN else selectedDestination
     val startDestination = NavDestinations.LOGIN
-
-    val dnevnikViewModel: DnevnikScreenViewModel = viewModel()
-    val dnevniciListScreenViewModel: DnevniciListScreenViewModel = viewModel()
-    val projectScreenViewModel: ProjectScreenViewModel = viewModel()
-    val profileScreenViewModel: ProfileScreenViewModel = viewModel(factory = ProfileScreenViewModel.Factory)
 
     NavHost(
         modifier = modifier,

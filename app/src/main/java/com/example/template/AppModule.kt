@@ -1,8 +1,8 @@
 package com.example.template
 
 import android.content.Context
-import com.example.network.network.EncryptedUserSessionRepository
-import com.example.network.network.UserSessionRepository
+import com.example.network.network.repositories.EncryptedUserSessionRepository
+import com.example.network.network.repositories.UserSessionRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

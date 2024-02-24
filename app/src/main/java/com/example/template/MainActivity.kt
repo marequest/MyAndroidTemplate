@@ -14,8 +14,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.template.ui.theme.TemplateTheme
+import com.example.template.viewmodels.DnevniciListScreenViewModel
+import com.example.template.viewmodels.DnevnikScreenViewModel
 import com.example.template.viewmodels.LoginViewModel
+import com.example.template.viewmodels.ProfileScreenViewModel
+import com.example.template.viewmodels.ProjectScreenViewModel
 import com.google.accompanist.adaptive.calculateDisplayFeatures
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,7 +28,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val loginViewModel: LoginViewModel by viewModels()
-
+    private val dnevnikViewModel: DnevnikScreenViewModel by viewModels()
+    private val dnevniciListScreenViewModel: DnevniciListScreenViewModel by viewModels()
+    private val projectScreenViewModel: ProjectScreenViewModel by viewModels()
+    private val profileScreenViewModel: ProfileScreenViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +48,10 @@ class MainActivity : ComponentActivity() {
 
                 TemplateApp(
                     loginViewModel = loginViewModel,
+                    dnevnikViewModel = dnevnikViewModel,
+                    dnevniciListScreenViewModel = dnevniciListScreenViewModel,
+                    projectScreenViewModel = projectScreenViewModel,
+                    profileScreenViewModel = profileScreenViewModel,
                     windowSize = windowSize,
                     displayFeatures = displayFeatures
                 )
