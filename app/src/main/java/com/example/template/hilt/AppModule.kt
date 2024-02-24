@@ -1,4 +1,4 @@
-package com.example.template
+package com.example.template.hilt
 
 import android.content.Context
 import com.example.network.network.repositories.EncryptedUserSessionRepository

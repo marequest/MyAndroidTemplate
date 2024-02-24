@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -42,7 +41,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.example.template.fakedata.DnevniciDataProvider
 import com.example.template.fakedata.Dnevnik
-import com.example.template.makeStatusNotification
+import com.example.template.pages.elements.makeStatusNotification
 import com.example.template.pages.elements.showToast
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
