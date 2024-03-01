@@ -41,7 +41,9 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("androidx.test:core-ktx:1.5.0")
     testImplementation("junit:junit:4.13.2")
+    testImplementation(project(":app"))
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
@@ -58,6 +60,19 @@ dependencies {
 
     // EncryptedSharedPreferences
     implementation("androidx.security:security-crypto:1.0.0")
+
+    // JUnit for unit testing
+    testImplementation("junit:junit:4.13.2")
+    // Mockito for mocking in tests
+    testImplementation("org.mockito:mockito-core:3.11.2")
+    // Or use MockK for Kotlin
+    testImplementation("io.mockk:mockk:1.12.0")
+    // AndroidX Test libraries for instrumented tests
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    // Coroutine testing
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1")
+    testImplementation("io.mockk:mockk:1.12.0")
 }
 
 kapt {

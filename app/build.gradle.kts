@@ -98,6 +98,21 @@ dependencies {
     // my network
     implementation(project(":network"))
 
+
+    // JUnit for unit testing
+    testImplementation("junit:junit:4.13.2")
+    // Mockito for mocking in tests
+    testImplementation("org.mockito:mockito-core:3.11.2")
+    // Or use MockK for Kotlin
+    testImplementation("io.mockk:mockk:1.12.0")
+    // AndroidX Test libraries for instrumented tests
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    // Coroutine testing
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
+
+    testImplementation("io.mockk:mockk:1.12.0")
+
 }
 
 kapt {

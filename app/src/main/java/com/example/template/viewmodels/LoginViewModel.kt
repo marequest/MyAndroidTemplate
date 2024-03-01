@@ -7,8 +7,7 @@ import com.example.network.network.RetrofitClient
 import com.example.network.network.repositories.UserSessionRepository
 import com.example.network.network.data.LoginRequest
 import com.example.network.network.data.TokenZeroRequest
-import com.example.network.network.helpers.generateSalt
-import com.example.network.network.helpers.hashPassword
+import com.example.network.network.helpers.AuthServiceHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,9 +32,11 @@ sealed interface TokenRenewalState {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userSessionRepository: UserSessionRepository
+    private val userSessionRepository: UserSessionRepository,
+    private val authServiceHelper: AuthServiceHelper,
+    private val authService: AuthService
 ) : ViewModel() {
-    private val authService = RetrofitClient.getRetrofitInstance().create(AuthService::class.java)
+//    private val authService = RetrofitClient.getRetrofitInstance().create(AuthService::class.java)
 
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState
@@ -52,8 +53,8 @@ class LoginViewModel @Inject constructor(
 
         } else {
             try {
-                val salt = generateSalt()
-                val tokenZero = hashPassword(password, salt)
+                val salt = authServiceHelper.generateSalt()
+                val tokenZero = authServiceHelper.hashPassword(password, salt)
                 userSessionRepository.storeTokenZero(tokenZero)
 
                 val loginRequest = LoginRequest(username, password, salt)
@@ -70,6 +71,28 @@ class LoginViewModel @Inject constructor(
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error(e.message ?: "Unknown error")
             }
+        }
+    }
+
+    fun loginForTest(username: String, password: String) = viewModelScope.launch {
+        try {
+            val salt = authServiceHelper.generateSalt()
+            val tokenZero = authServiceHelper.hashPassword(password, salt)
+            userSessionRepository.storeTokenZero(tokenZero)
+
+            val loginRequest = LoginRequest(username, password, salt)
+
+            val response = authService.loginUser(loginRequest)
+
+            if (response.isSuccessful && response.body() != null) {
+                val loginResponse = response.body()!!
+                userSessionRepository.storeLoginDetails(loginResponse.userUUID, loginResponse.accessToken, loginResponse.ttl)
+                _loginState.value = LoginState.Success
+            } else {
+                _loginState.value = LoginState.Error("Login failed: ${response.errorBody()?.string() ?: "Unknown error"}")
+            }
+        } catch (e: Exception) {
+            _loginState.value = LoginState.Error(e.message ?: "Unknown error")
         }
     }
 

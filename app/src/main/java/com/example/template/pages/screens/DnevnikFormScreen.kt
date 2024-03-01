@@ -225,6 +225,7 @@ fun ThirdPage() {
     FilePicker()
     MyHeaderText(text = "Informacije")
     LabeledRow(label = "Vode Dnevnik", value = "")
+    // TODO Dugme
     LabeledRow(label = "Izvodjac Radova", value = "Potpis")
     LabeledRow(label = "Nadzorni Organ", value = "")
 
