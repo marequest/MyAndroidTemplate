@@ -1,6 +1,6 @@
 package com.example.template
 
-import com.example.template.pages.screens.DnevnikFormScreen
+import com.example.template.pages.screens.StranicaFormScreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -48,7 +47,7 @@ import com.example.template.ui.utils.NavigationType
 import com.example.template.ui.utils.isBookPosture
 import com.example.template.ui.utils.isSeparating
 import com.example.template.viewmodels.DnevniciListScreenViewModel
-import com.example.template.viewmodels.DnevnikScreenViewModel
+import com.example.template.viewmodels.StraniceScreenViewModel
 import com.example.template.viewmodels.LoginViewModel
 import com.example.template.viewmodels.ProfileScreenViewModel
 import com.example.template.viewmodels.ProjectScreenViewModel
@@ -58,7 +57,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TemplateApp(
     loginViewModel: LoginViewModel,
-    dnevnikViewModel: DnevnikScreenViewModel,
+    dnevnikViewModel: StraniceScreenViewModel,
     dnevniciListScreenViewModel: DnevniciListScreenViewModel,
     projectScreenViewModel: ProjectScreenViewModel,
     profileScreenViewModel: ProfileScreenViewModel,
@@ -128,7 +127,7 @@ fun TemplateApp(
 @Composable
 private fun TemplateNavigationWrapperUI(
     loginViewModel: LoginViewModel,
-    dnevnikViewModel: DnevnikScreenViewModel,
+    dnevnikViewModel: StraniceScreenViewModel,
     dnevniciListScreenViewModel: DnevniciListScreenViewModel,
     projectScreenViewModel: ProjectScreenViewModel,
     profileScreenViewModel: ProfileScreenViewModel,
@@ -213,7 +212,7 @@ private fun TemplateNavigationWrapperUI(
 @Composable
 fun TemplateAppContent(
     loginViewModel: LoginViewModel,
-    dnevnikViewModel: DnevnikScreenViewModel,
+    dnevnikViewModel: StraniceScreenViewModel,
     dnevniciListScreenViewModel: DnevniciListScreenViewModel,
     projectScreenViewModel: ProjectScreenViewModel,
     profileScreenViewModel: ProfileScreenViewModel,
@@ -226,8 +225,12 @@ fun TemplateAppContent(
     onDrawerClicked: () -> Unit = {}
 ) {
 
+    // TODO check if current user is logged in already
+//    val startDestination = if (!homeUIState.loggedIn) NavDestinations.LOGIN else selectedDestination
+    val startDestination = NavDestinations.LOGIN
+
     Row(modifier = Modifier.fillMaxSize()) {
-        AnimatedVisibility(visible = (navigationType == NavigationType.NAVIGATION_RAIL)) {
+        AnimatedVisibility(visible = (navigationType == NavigationType.NAVIGATION_RAIL) && selectedDestination != NavDestinations.LOGIN) {
             TemplateNavigationRail(
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigateToTopLevelDestination,
@@ -256,10 +259,11 @@ fun TemplateAppContent(
 
                 },
                 selectedDestination = selectedDestination,
+                startDestination = startDestination,
                 modifier = Modifier.weight(1f)
             )
 
-            AnimatedVisibility(visible = (navigationType == NavigationType.BOTTOM_NAVIGATION)) {
+            AnimatedVisibility(visible = (navigationType == NavigationType.BOTTOM_NAVIGATION) && selectedDestination != NavDestinations.LOGIN) {
                 TemplateBottomNavigationBar(
                     selectedDestination = selectedDestination,
                     navigateToTopLevelDestination = navigateToTopLevelDestination
@@ -272,7 +276,7 @@ fun TemplateAppContent(
 @Composable
 fun TemplateNavHost(
     loginViewModel: LoginViewModel,
-    dnevnikViewModel: DnevnikScreenViewModel,
+    dnevnikViewModel: StraniceScreenViewModel,
     dnevniciListScreenViewModel: DnevniciListScreenViewModel,
     projectScreenViewModel: ProjectScreenViewModel,
     profileScreenViewModel: ProfileScreenViewModel,
@@ -283,11 +287,10 @@ fun TemplateNavHost(
     onLoginSuccessful: () -> Unit = {},
     onRegistrationSuccessful: () -> Unit = {},
     selectedDestination: String,
+    startDestination: String,
     modifier: Modifier
 ) {
-    // TODO check if current user is logged in already
-//    val startDestination = if (!homeUIState.loggedIn) NavDestinations.LOGIN else selectedDestination
-    val startDestination = NavDestinations.LOGIN
+
 
     NavHost(
         modifier = modifier,
@@ -319,20 +322,30 @@ fun TemplateNavHost(
         composable(NavDestinations.DNEVNICI_LIST_SCREEN) {
             DnevniciListScreen(
                 onDnevnikClick = {dnevnikId ->
-                    dnevnikViewModel.setDnevnikId(dnevnikId.toString())
+                    dnevnikViewModel.setDnevnikId(dnevnikId.toLong())
                     navigationActions.navigateTo(NavDestinations.DNEVNIK_FORM_SCREEN)
                 },
                 onDnevnikSettingsClick = {dnevnikId ->
-                    dnevnikViewModel.setDnevnikId(dnevnikId.toString())
+                    dnevnikViewModel.setDnevnikId(dnevnikId.toLong())
                     navigationActions.navigateTo(NavDestinations.DNEVNIK_SETTINGS_SCREEN)
                 }
             )
         }
         composable(NavDestinations.DNEVNIK_SETTINGS_SCREEN) {
-            DnevnikSettingsScreen(dnevnikViewModel.uiState.collectAsState().value.dnevnikId)
+            DnevnikSettingsScreen(dnevnikViewModel.uiState.collectAsState().value.strana?.dnevnikId.toString())
         }
         composable(NavDestinations.DNEVNIK_FORM_SCREEN) {
-            DnevnikFormScreen(dnevnikViewModel.uiState.collectAsState().value.dnevnikId)
+
+            // TODO Vidi sto selectedStranica ne apdejtuje datum instant
+            StranicaFormScreen(
+                viewModel = dnevnikViewModel,
+                changeStranica = {
+                    dnevnikViewModel.updateStranaId(it)
+                },
+                updateStranaDate = {
+                    dnevnikViewModel.updateStranaDate(it)
+                }
+            )
         }
         composable(NavDestinations.PROFILE_SCREEN) {
             ProfileScreen()

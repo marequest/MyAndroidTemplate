@@ -6,18 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.template.ui.theme.TemplateTheme
 import com.example.template.viewmodels.DnevniciListScreenViewModel
-import com.example.template.viewmodels.DnevnikScreenViewModel
+import com.example.template.viewmodels.StraniceScreenViewModel
 import com.example.template.viewmodels.LoginViewModel
 import com.example.template.viewmodels.ProfileScreenViewModel
 import com.example.template.viewmodels.ProjectScreenViewModel
@@ -28,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val loginViewModel: LoginViewModel by viewModels()
-    private val dnevnikViewModel: DnevnikScreenViewModel by viewModels()
+    private val dnevnikViewModel: StraniceScreenViewModel by viewModels()
     private val dnevniciListScreenViewModel: DnevniciListScreenViewModel by viewModels()
     private val projectScreenViewModel: ProjectScreenViewModel by viewModels()
     private val profileScreenViewModel: ProfileScreenViewModel by viewModels()

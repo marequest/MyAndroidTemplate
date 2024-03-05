@@ -48,7 +48,7 @@ class LoginViewModel @Inject constructor(
     fun login(username: String, password: String) = viewModelScope.launch {
         if(IS_TEST) {
             _loginState.value = LoginState.Loading
-            delay(2000)
+            delay(1000)
             _loginState.value = LoginState.Success
 
         } else {
@@ -73,29 +73,6 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-    fun loginForTest(username: String, password: String) = viewModelScope.launch {
-        try {
-            val salt = authServiceHelper.generateSalt()
-            val tokenZero = authServiceHelper.hashPassword(password, salt)
-            userSessionRepository.storeTokenZero(tokenZero)
-
-            val loginRequest = LoginRequest(username, password, salt)
-
-            val response = authService.loginUser(loginRequest)
-
-            if (response.isSuccessful && response.body() != null) {
-                val loginResponse = response.body()!!
-                userSessionRepository.storeLoginDetails(loginResponse.userUUID, loginResponse.accessToken, loginResponse.ttl)
-                _loginState.value = LoginState.Success
-            } else {
-                _loginState.value = LoginState.Error("Login failed: ${response.errorBody()?.string() ?: "Unknown error"}")
-            }
-        } catch (e: Exception) {
-            _loginState.value = LoginState.Error(e.message ?: "Unknown error")
-        }
-    }
-
 
     fun renewAccessToken() = viewModelScope.launch {
         if(IS_TEST) {

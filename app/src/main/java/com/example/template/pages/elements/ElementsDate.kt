@@ -1,6 +1,7 @@
 package com.example.template.pages.elements
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.widget.DatePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -60,7 +61,9 @@ fun DaySelector() {
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
-            modifier = Modifier.fillMaxWidth().menuAnchor()
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
         )
         ExposedDropdownMenu(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -81,42 +84,68 @@ fun DaySelector() {
 }
 
 @Composable
-fun DateChooser() {
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    val context = LocalContext.current
+fun DateChooser(
+    context: Context,
+    showDialog: Boolean,
+    onShowDialogChange: (Boolean) -> Unit,
+    selectedDate: LocalDate,
+    onDateSelected: (LocalDate) -> Unit
+) {
 
     Text(
-        text = "Datum: ${selectedDate.toString()}",
+        text = selectedDate.toString(),
         fontSize = 24.sp,
-        modifier = Modifier.padding(8.dp).clickable { showDialog = true },
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable { onShowDialogChange(true) },
         color = MaterialTheme.colorScheme.primary
     )
 
-    // Show dialog
+    MyDatePickerDialog(
+        context = context,
+        showDialog = showDialog,
+        selectedDate,
+        onDialogDismiss = { onShowDialogChange(false) },
+        onDateSelected = { onDateSelected(it) }
+    )
+}
+
+@Composable
+fun MyDatePickerDialog(
+    context: Context,
+    showDialog: Boolean,
+    selectedDate: LocalDate,
+    onDialogDismiss: () -> Unit,  // Callback for when the dialog is dismissed
+    onDateSelected: (LocalDate) -> Unit  // Callback for when a date is selected
+) {
+
     if (showDialog) {
         val onDateSetListener = DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-            selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
-            showDialog = false
+            // Update the selected date
+            val selectedDateTemp = LocalDate.of(year, month + 1, dayOfMonth)
+            onDateSelected(selectedDateTemp)  // Invoke the callback with the new date
+            onDialogDismiss()  // Invoke the callback to dismiss the dialog
         }
 
-        val datePickerDialog = DatePickerDialog(
-            context,
-            onDateSetListener,
-            selectedDate.year,
-            selectedDate.monthValue - 1,
-            selectedDate.dayOfMonth
-        )
-
-        // Prevent dialog from being dismissed on outside touch
-        datePickerDialog.setCancelable(false)
+        // Remember the DatePickerDialog to avoid recreating it on recompositions
+        val datePickerDialog = remember {
+            DatePickerDialog(
+                context,
+                onDateSetListener,
+                selectedDate.year,
+                selectedDate.monthValue - 1,
+                selectedDate.dayOfMonth
+            ).apply {
+                setCancelable(false)  // Prevent dialog from being dismissed on outside touch
+            }
+        }
 
         // Show the DatePickerDialog
         LaunchedEffect(Unit) {
             datePickerDialog.show()
         }
 
-        // Dismiss the dialog when showDialog becomes false
+        // Dismiss the dialog on cleanup
         DisposableEffect(Unit) {
             onDispose {
                 datePickerDialog.dismiss()

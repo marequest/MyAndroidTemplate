@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.example.template.pages.elements.MyHeaderText
 import com.example.template.pages.elements.PasswordField
 import com.example.template.pages.elements.SaveButton
+import com.example.template.pages.elements.SimpleTopAppBar
 import com.example.template.pages.elements.UserProfileField
 import com.example.template.pages.elements.UserSignatureField
 

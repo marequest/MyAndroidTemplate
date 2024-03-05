@@ -16,8 +16,6 @@
 
 package com.example.template.fakedata
 
-import com.example.template.R
-
 /**
  * An static data store of [Account]s. This includes both [Account]s owned by the current user and
  * all [Account]s of the current user's contacts.
@@ -52,6 +50,6 @@ object DnevniciDataProvider {
 
     )
 
-    fun getDefaultDnevnik() = allDnevnici.first()
+    fun getLastDnevnik() = allDnevnici.last()
 
 }

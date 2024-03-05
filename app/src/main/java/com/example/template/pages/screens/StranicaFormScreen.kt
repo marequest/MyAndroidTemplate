@@ -21,25 +21,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Looks3
+import androidx.compose.material.icons.filled.LooksOne
+import androidx.compose.material.icons.filled.LooksTwo
 import androidx.compose.material.icons.filled.NavigateNext
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavBackStackEntry
+import com.example.template.fakedata.Strana
+import com.example.template.fakedata.StraniceDataProvider
+import com.example.template.pages.elements.CustomTabRow
 import com.example.template.pages.elements.DateChooser
 import com.example.template.pages.elements.DaySelector
 import com.example.template.pages.elements.DropdownTab
@@ -50,101 +48,117 @@ import com.example.template.pages.elements.LargeDescriptionTextField
 import com.example.template.pages.elements.LargePrimedbeTextField
 import com.example.template.pages.elements.MyHeaderText
 import com.example.template.pages.elements.NumberInputLayout
-import com.example.template.pages.elements.SaveButton
+import com.example.template.pages.elements.SimpleTopAppBar
 import com.example.template.pages.elements.Stampaj
 import com.example.template.pages.elements.TimeSelectionRow
 import com.example.template.pages.elements.TimeTemperatureRow
 import com.example.template.pages.elements.TripleInputRow
-import com.example.template.viewmodels.DnevnikScreenViewModel
+import com.example.template.pages.elements.showToast
+import com.example.template.viewmodels.StraniceScreenViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DnevnikFormScreen(dnevnikId: String?) {
+fun StranicaFormScreen(
+    viewModel: StraniceScreenViewModel,
+    changeStranica: (Long) -> Unit,
+    updateStranaDate: (Date) -> Unit
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
 
-    Scaffold(
-        topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior,
-            "Gradjevinski Dnevnik #$dnevnikId"
-        ) },
-        floatingActionButton = {
-            Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.padding(0.dp)) {
-                Column(horizontalAlignment = Alignment.End) {
-                    InfoFABWithDialog()
-                    Spacer(modifier = Modifier.padding(8.dp))
-                    FloatingActionButton(
-                        onClick = {
-                            when (selectedTabIndex) {
-                                0 -> {
-                                    selectedTabIndex = 1
-                                }
-                                1 -> {
-                                    selectedTabIndex = 2
-                                }
-                                else -> { // Cuvaj Podatke
-                                    Toast.makeText(context, "Sacuvano!", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        },
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-                    ) {
-                        if (selectedTabIndex == 2){
-                            Row(Modifier.padding(horizontal = 20.dp)) {
-                                Icon(Icons.Filled.Save, "Sacuvaj")
-                                Text(modifier = Modifier.padding(top = 2.dp), text = "  Sacuvaj")
-                            }
-                        } else {
-                            Icon(Icons.Filled.NavigateNext, "Sledeca Stranica")
+    val strana = viewModel.uiState.collectAsState().value.strana
+    println(strana)
 
+
+    strana?.let {
+        Scaffold(
+            topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior,
+                "Dnevnik ${strana.dnevnikId} - Strana #${strana.stranaId}"
+            )},
+            floatingActionButton = {
+                Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.padding(0.dp)) {
+                    Column(horizontalAlignment = Alignment.End) {
+                        InfoFABWithDialog()
+                        Spacer(modifier = Modifier.padding(8.dp))
+                        FloatingActionButton(
+                            onClick = {
+                                when (selectedTabIndex) {
+                                    0 -> {
+                                        selectedTabIndex = 1
+                                    }
+                                    1 -> {
+                                        selectedTabIndex = 2
+                                    }
+                                    else -> { // Cuvaj Podatke
+                                        Toast.makeText(context, "Sacuvano!", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            },
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+                        ) {
+                            if (selectedTabIndex == 2){
+                                Row(Modifier.padding(horizontal = 20.dp)) {
+                                    Icon(Icons.Filled.Save, "Sacuvaj")
+                                    Text(modifier = Modifier.padding(top = 2.dp), text = "  Sacuvaj")
+                                }
+                            } else {
+                                Icon(Icons.Filled.NavigateNext, "Sledeca Stranica")
+
+                            }
                         }
                     }
                 }
+            },
+            bottomBar = {
+                BottomAppBar(
+                    modifier = Modifier.height(0.dp)
+                ) {
+                }
             }
-        },
-        bottomBar = {
-            BottomAppBar(
-                modifier = Modifier.height(0.dp)
+        ) { innerPadding ->
+            Column(modifier = Modifier
+                .padding(innerPadding)
             ) {
+                TabScreenWithProgress(
+                    strana = strana,
+                    selectedTabIndex = selectedTabIndex,
+                    changeSelectedIndex = { selectedTabIndex = it },
+                    changeStranica = changeStranica,
+                    updateStranaDate = updateStranaDate,
+                    dnevnikId = strana.dnevnikId,
+                    stranicaId = strana.stranaId
+                )
             }
         }
-    ) { innerPadding ->
-        Column(modifier = Modifier
-//            .padding(start = 16.dp, end = 16.dp)
-            .padding(innerPadding)
-        ) {
-            TabScreenWithProgress(selectedTabIndex) { selectedTabIndex = it }        }
+    } ?: run {
+        showToast(context, "GRESKA: Nije pronadjena strana!")
+        EmptyComingSoon()
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SimpleTopAppBar(scrollBehavior: TopAppBarScrollBehavior, text: String) {
-
-    TopAppBar(
-        title = { Text(
-            text = text,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.W800,
-            color = Color.White,
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) },
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
-        scrollBehavior = scrollBehavior,
-    )
-}
 
 @Composable
-fun TabScreenWithProgress(selectedTabIndex: Int, changeSelectedIndex: (Int) -> Unit) {
+fun TabScreenWithProgress(
+    strana: Strana,
+    selectedTabIndex: Int,
+    changeSelectedIndex: (Int) -> Unit,
+    changeStranica: (Long) -> Unit,
+    updateStranaDate: (Date) -> Unit,
+    dnevnikId: Long,
+    stranicaId: Long
+) {
     val tabs = listOf("Korak 1", "Korak 2", "Korak 3")
-    val tabIcons = listOf(Icons.Filled.DateRange, Icons.Filled.AccessTime, Icons.Filled.People)
+    val tabIcons = listOf(Icons.Filled.LooksOne, Icons.Filled.LooksTwo, Icons.Filled.Looks3)
 
     val animatedProgress = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
-
     LaunchedEffect(selectedTabIndex) {
         coroutineScope.launch {
             animatedProgress.animateTo(
@@ -154,8 +168,40 @@ fun TabScreenWithProgress(selectedTabIndex: Int, changeSelectedIndex: (Int) -> U
         }
     }
 
+    val selectedDate = strana.datumStrane.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+
+
+    var showDialog by remember { mutableStateOf(false) }
+    // u TODO???? selectedDate ce biti datum dnevnika po dnevnikID-
+//    var selectedDate by remember { mutableStateOf(stranicaDate) }
+    val context = LocalContext.current
+
 
     Column(modifier = Modifier.fillMaxSize()) {
+        CustomTabRow(
+            context = context,
+            showDialog = showDialog,
+            onShowDialogChange = { showDialog = it },
+            selectedDate = selectedDate,
+            onDateSelected = { newDate ->
+                updateStranaDate(Date.from(newDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+            },
+            onLeftArrowClick = {
+//                changeStranica((stranicaId.toInt().minus(1)).toString())
+//                selectedDate = selectedStrana.datumStrane.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                changeStranica(stranicaId.minus(1))
+            },
+            leftArrowEnabled = stranicaId > 1,
+            onRightArrowClick = {
+                changeStranica(stranicaId.plus(1))
+//                changeStranica((stranicaId.toInt() + 1).toString())
+//                selectedDate = selectedStrana.datumStrane.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+            },
+            /// TODO Ovo ce trebati fix
+            rightArrowEnabled = stranicaId != StraniceDataProvider.getLastStranica().stranaId
+
+        )
+
         TabRow(
             selectedTabIndex = selectedTabIndex,
             indicator = { }, // Empty indicator
@@ -256,7 +302,19 @@ fun TripleInputRows() {
 fun DateAndDaySelector() {
     DaySelector()
     Spacer(modifier = Modifier.height(16.dp))
-    DateChooser()
+
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    val context = LocalContext.current
+    DateChooser(
+        context = context,
+        showDialog = showDialog,
+        onShowDialogChange = { showDialog = it },
+        selectedDate = selectedDate,
+        onDateSelected = { newDate ->
+            selectedDate = newDate
+        }
+    )
 }
 
 @Composable

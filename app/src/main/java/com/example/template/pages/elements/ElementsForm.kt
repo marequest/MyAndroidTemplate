@@ -1,6 +1,7 @@
 package com.example.template.pages.elements
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,6 +27,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Print
@@ -37,6 +40,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -45,6 +49,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -56,14 +63,53 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.time.LocalDate
 import java.time.LocalTime
 import kotlin.math.abs
 import kotlin.math.ceil
+
+
+@Composable
+fun CustomTabRow(
+    context: Context,
+    showDialog: Boolean,
+    onShowDialogChange: (Boolean) -> Unit,
+    selectedDate: LocalDate,
+    onDateSelected: (LocalDate) -> Unit,
+    onLeftArrowClick: () -> Unit,
+    leftArrowEnabled: Boolean,
+    onRightArrowClick: () -> Unit,
+    rightArrowEnabled: Boolean
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(enabled = leftArrowEnabled, onClick = onLeftArrowClick) {
+            Icon(Icons.Filled.ArrowBack, contentDescription = "Left Arrow")
+        }
+        Spacer(Modifier.weight(1f))
+        DateChooser(
+            context = context,
+            showDialog = showDialog,
+            onShowDialogChange = onShowDialogChange,
+            selectedDate = selectedDate,
+            onDateSelected = onDateSelected
+        )
+        Spacer(Modifier.weight(1f))
+        IconButton(enabled = rightArrowEnabled, onClick = onRightArrowClick) {
+            Icon(Icons.Filled.ArrowForward, contentDescription = "Right Arrow")
+        }
+    }
+}
 
 @Composable
 fun LabeledRow(label: String, value: String) {
@@ -97,6 +143,24 @@ fun MyHeaderText(text: String) {
     )
     HorizontalLineSpacer(modifier = Modifier.padding(top = 0.dp))
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SimpleTopAppBar(scrollBehavior: TopAppBarScrollBehavior, text: String) {
+
+    TopAppBar(
+        title = { Text(
+            text = text,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.W800,
+            color = Color.White,
+            modifier = Modifier.padding(vertical = 8.dp)
+        ) },
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
+        scrollBehavior = scrollBehavior,
+    )
+}
+
 
 @Composable
 fun DropdownTab(title: String, expanded: Boolean, onTabClick: () -> Unit, content: @Composable () -> Unit) {
@@ -162,9 +226,6 @@ fun TimeSelectionRow() {
 
     // Observe changes in prviMinut and drugiMinut and update ukupnoSatiValue accordingly
     val ukupnoSatiValue by derivedStateOf {
-        println("prvi minut: $prviMinut")
-        println("drugi minut: $drugiMinut")
-
         if(prviMinut > drugiMinut){
             ceil(abs(prviMinut - drugiMinut - 24*60) / 60.0).toInt().toString()
         } else {

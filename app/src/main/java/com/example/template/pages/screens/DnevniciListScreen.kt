@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.example.template.fakedata.DnevniciDataProvider
 import com.example.template.fakedata.Dnevnik
+import com.example.template.pages.elements.SimpleTopAppBar
 import com.example.template.pages.elements.makeStatusNotification
 import com.example.template.pages.elements.showToast
 
