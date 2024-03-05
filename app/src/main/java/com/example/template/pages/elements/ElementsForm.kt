@@ -63,7 +63,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -71,6 +70,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.time.LocalDate
 import java.time.LocalTime
+import java.util.Calendar
+import java.util.Date
 import kotlin.math.abs
 import kotlin.math.ceil
 
@@ -220,9 +221,28 @@ fun HorizontalLineSpacer(modifier: Modifier) {
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun TimeSelectionRow() {
-    var prviMinut by remember { mutableStateOf(LocalTime.now().hour * 60 + LocalTime.now().minute) }
-    var drugiMinut by remember { mutableStateOf(LocalTime.now().hour * 60 + LocalTime.now().minute) }
+fun TimeSelectionRow(
+    smena: Int,
+    datumOdSmena: Date,
+    datumDoSmena: Date
+) {
+    // TODO UPDATEOVANJE
+    val calendarOd = Calendar.getInstance().apply { time = datumOdSmena }
+    val localTimeOdSmenaOd = LocalTime.of(calendarOd.get(Calendar.HOUR_OF_DAY), calendarOd.get(Calendar.MINUTE))
+    val totalMinutesOdSmenaOd = localTimeOdSmenaOd.hour * 60 + localTimeOdSmenaOd.minute
+
+    val calendarDo = Calendar.getInstance().apply { time = datumDoSmena }
+    val localTimeOdSmenaDo = LocalTime.of(calendarDo.get(Calendar.HOUR_OF_DAY), calendarDo.get(Calendar.MINUTE))
+    val totalMinutesOdSmenaDo = localTimeOdSmenaDo.hour * 60 + localTimeOdSmenaDo.minute
+
+    // Remember the calculated minutes
+    var prviMinut by remember { mutableStateOf(totalMinutesOdSmenaOd) }
+    var drugiMinut by remember { mutableStateOf(totalMinutesOdSmenaDo) }
+
+
+
+//    var prviMinut by remember { mutableStateOf(LocalTime.now().hour * 60 + LocalTime.now().minute) }
+//    var drugiMinut by remember { mutableStateOf(LocalTime.now().hour * 60 + LocalTime.now().minute) }
 
     // Observe changes in prviMinut and drugiMinut and update ukupnoSatiValue accordingly
     val ukupnoSatiValue by derivedStateOf {
@@ -237,9 +257,9 @@ fun TimeSelectionRow() {
         Spacer(modifier = Modifier.width(8.dp))
         // Assume TimePickerTextField is a custom composable that takes a callback
         // This is a placeholder for your actual TimePickerTextField implementation
-        TimePickerTextField { newValue -> prviMinut = newValue }
+        TimePickerTextField(datumOdSmena) { newValue -> prviMinut = newValue }
         Spacer(modifier = Modifier.width(8.dp))
-        TimePickerTextField { newValue -> drugiMinut = newValue }
+        TimePickerTextField(datumDoSmena) { newValue -> drugiMinut = newValue }
         Spacer(modifier = Modifier.width(12.dp))
 
         OutlinedTextField(
@@ -370,34 +390,35 @@ fun LargePrimedbeTextField() {
 }
 
 @Composable
-fun NumberInputLayout() {
+fun NumberInputLayout(smena: Int, brGradjRadnika: Int, brZanatlija: Int, brTehOsoblja: Int, brOstali: Int) {
     Column {
-        var number1 by remember { mutableStateOf("") }
-        var number2 by remember { mutableStateOf("") }
-        var number3 by remember { mutableStateOf("") }
-        var number4 by remember { mutableStateOf("") }
+        var number1 by remember { mutableStateOf(brGradjRadnika) }
+        var number2 by remember { mutableStateOf(brZanatlija) }
+        var number3 by remember { mutableStateOf(brTehOsoblja) }
+        var number4 by remember { mutableStateOf(brOstali) }
 
         val numbers = listOf(
-            Pair("Gradjevinski radnici", number1),
-            Pair("Zanatlije", number2),
-            Pair("Tehnicko osoblje", number3),
-            Pair("Ostali", number4)
+            Pair("Gradjevinski radnici", brGradjRadnika),
+            Pair("Zanatlije", brZanatlija),
+            Pair("Tehnicko osoblje", brTehOsoblja),
+            Pair("Ostali", brOstali)
         )
 
         Column {
             numbers.forEachIndexed { index, pair ->
                 val (label, value) = pair
                 OutlinedTextField(
-                    value = value,
+                    value = value.toString(),
                     onValueChange = { newValue ->
-                        if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
-                            when (index) {
-                                0 -> number1 = newValue
-                                1 -> number2 = newValue
-                                2 -> number3 = newValue
-                                3 -> number4 = newValue
-                            }
-                        }
+//                                    updateRadnikeSmene(smena, brGradjRadnika, brZanatlija, brOstali)
+//                        if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
+//                            when (index) {
+//                                0 -> number1 = newValue.toInt()
+//                                1 -> number2 = newValue.toInt()
+//                                2 -> number3 = newValue.toInt()
+//                                3 -> number4 = newValue.toInt()
+//                            }
+//                        }
                     },
                     label = { Text(label) },
                     singleLine = true,
@@ -410,7 +431,7 @@ fun NumberInputLayout() {
         }
 
         OutlinedTextField(
-            value = number1 + number2 + number3 + number4,
+            value = (number1 + number2 + number3 + number4).toString(),
             onValueChange = {}, // No action on value change
             label = { Text("Ukupno") },
             enabled = false,
@@ -473,8 +494,78 @@ fun Stampaj() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerTextField(/*time: LocalTime, timeFormatter: DateTimeFormatter, setTime: (LocalTime) -> Unit*/
-                        onTimeSelected: (Int) -> Unit) {
+fun TimePickerTextField(
+    datumOdSmena1: Date,
+    onTimeSelected: (Int) -> Unit
+) {
+    var showingDialog by remember { mutableStateOf(false) }
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = datumOdSmena1.hours,
+        initialMinute = datumOdSmena1.minutes,
+        is24Hour = true
+    )
+    Text(
+        text = "${timePickerState.hour}:${timePickerState.minute}",
+        fontSize = 24.sp,
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable { showingDialog = true },
+        color = MaterialTheme.colorScheme.primary
+    )
+
+    if (showingDialog) {
+        AlertDialog(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(size = 12.dp)
+                ),
+            onDismissRequest = { showingDialog = false }
+        ) {
+            Column(
+                modifier = Modifier
+                    .background(
+                        color = Color.LightGray.copy(alpha = 0.3f)
+                    )
+                    .padding(top = 28.dp, start = 20.dp, end = 20.dp, bottom = 12.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // time picker
+                TimePicker(state = timePickerState)
+
+                // buttons
+                Row(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    // dismiss button
+                    TextButton(onClick = { showingDialog = false }) {
+                        Text(text = "Dismiss")
+                    }
+
+                    // confirm button
+                    TextButton(
+                        onClick = {
+                            showingDialog = false
+                            onTimeSelected(timePickerState.hour * 60 + timePickerState.minute)
+                        }
+                    ) {
+                        Text(text = "Confirm")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerTextField(onTimeSelected: (Int) -> Unit) {
     var showingDialog by remember { mutableStateOf(false) }
 
     val timePickerState = rememberTimePickerState(

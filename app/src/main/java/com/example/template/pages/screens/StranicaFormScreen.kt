@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.DialogProperties
+import com.example.template.fakedata.Smena
 import com.example.template.fakedata.Strana
 import com.example.template.fakedata.StraniceDataProvider
 import com.example.template.pages.elements.CustomTabRow
@@ -65,15 +66,20 @@ import java.util.Date
 @Composable
 fun StranicaFormScreen(
     viewModel: StraniceScreenViewModel,
-    changeStranica: (Long) -> Unit,
-    updateStranaDate: (Date) -> Unit
 ) {
+    val changeStranica: (Long) -> Unit = {
+        viewModel.updateStranaId(it)
+    }
+    val updateStranaDate: (Date) -> Unit = {
+        viewModel.updateStranaDate(it)
+    }
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
 
     val strana = viewModel.uiState.collectAsState().value.strana
-    println(strana)
+//    println(strana)
 
 
     strana?.let {
@@ -231,7 +237,11 @@ fun TabScreenWithProgress(
         ) {
             when (selectedTabIndex) {
                 0 -> {
-                    FirstPage()
+                    FirstPage(
+                        strana.smenaPrva,
+                        strana.smenaDruga,
+                        strana.smenaTreca
+                    )
                 }
                 1 -> {
                     SecondPage()
@@ -246,13 +256,25 @@ fun TabScreenWithProgress(
 
 
 @Composable
-fun FirstPage() {
+fun FirstPage(
+    smenaPrva: Smena,
+    smenaDruga: Smena,
+    smenaTreca: Smena
+) {
     MyHeaderText(text = "Radno Vreme")
     Spacer(modifier = Modifier.height(12.dp))
-    DropdownTabsRadnoVremeInput()
+    DropdownTabsRadnoVremeInput(
+        smenaPrva.datumOd, smenaPrva.datumDo,
+        smenaDruga.datumOd, smenaDruga.datumDo,
+        smenaTreca.datumOd, smenaTreca.datumDo
+    )
     MyHeaderText(text = "Broj Radnika")
     Spacer(modifier = Modifier.height(12.dp))
-    DropdownTabsBrojRadnikaInput()
+    DropdownTabsBrojRadnikaInput(
+        smenaPrva.brGradjRadnika, smenaPrva.brZanatlija, smenaPrva.brTehOsoblja, smenaPrva.brOstali,
+        smenaDruga.brGradjRadnika, smenaDruga.brZanatlija, smenaDruga.brTehOsoblja, smenaDruga.brOstali,
+        smenaTreca.brGradjRadnika, smenaTreca.brZanatlija, smenaTreca.brTehOsoblja, smenaTreca.brOstali
+    )
 }
 
 @Composable
@@ -330,7 +352,14 @@ fun LabeledRows() {
 
 
 @Composable
-fun DropdownTabsRadnoVremeInput() {
+fun DropdownTabsRadnoVremeInput(
+    datumOdSmena1: Date,
+    datumDoSmena1: Date,
+    datumOdSmena2: Date,
+    datumDoSmena2: Date,
+    datumOdSmena3: Date,
+    datumDoSmena3: Date
+) {
     var expandedTab by remember { mutableStateOf<Int?>(0) } // Initially, the first tab is expanded. Use null for no tab expanded.
 
     Column() {
@@ -339,27 +368,31 @@ fun DropdownTabsRadnoVremeInput() {
             expanded = expandedTab == 0,
             onTabClick = { expandedTab = if (expandedTab == 0) null else 0 }
         ) {
-            TimeSelectionRow()
+            TimeSelectionRow(1, datumOdSmena1, datumDoSmena1)
         }
         DropdownTab(
             title = "II Smena",
             expanded = expandedTab == 1,
             onTabClick = { expandedTab = if (expandedTab == 1) null else 1 }
         ) {
-            TimeSelectionRow()
+            TimeSelectionRow(2, datumOdSmena2, datumDoSmena2)
         }
         DropdownTab(
             title = "III Smena",
             expanded = expandedTab == 2,
             onTabClick = { expandedTab = if (expandedTab == 2) null else 2 }
         ) {
-            TimeSelectionRow()
+            TimeSelectionRow(3, datumOdSmena3, datumDoSmena3)
         }
     }
 }
 
 @Composable
-fun DropdownTabsBrojRadnikaInput() {
+fun DropdownTabsBrojRadnikaInput(
+    brGradjRadnika: Int, brZanatlija: Int, brTehOsoblja: Int, brOstali: Int,
+    brGradjRadnika1: Int, brZanatlija1: Int, brTehOsoblja1: Int, brOstali1: Int,
+    brGradjRadnika2: Int, brZanatlija2: Int, brTehOsoblja2: Int, brOstali2: Int
+) {
     var expandedTab by remember { mutableStateOf<Int?>(0) } // Initially, the first tab is expanded. Use null for no tab expanded.
 
     Column() {
@@ -368,21 +401,21 @@ fun DropdownTabsBrojRadnikaInput() {
             expanded = expandedTab == 0,
             onTabClick = { expandedTab = if (expandedTab == 0) null else 0 }
         ) {
-            NumberInputLayout()
+            NumberInputLayout(1, brGradjRadnika, brZanatlija, brTehOsoblja, brOstali)
         }
         DropdownTab(
             title = "II Smena",
             expanded = expandedTab == 1,
             onTabClick = { expandedTab = if (expandedTab == 1) null else 1 }
         ) {
-            NumberInputLayout()
+            NumberInputLayout(2, brGradjRadnika1, brZanatlija1, brTehOsoblja1, brOstali1)
         }
         DropdownTab(
             title = "III Smena",
             expanded = expandedTab == 2,
             onTabClick = { expandedTab = if (expandedTab == 2) null else 2 }
         ) {
-            NumberInputLayout()
+            NumberInputLayout(3, brGradjRadnika2, brZanatlija2, brTehOsoblja2, brOstali2)
         }
     }
 }

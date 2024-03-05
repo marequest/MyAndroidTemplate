@@ -15,8 +15,12 @@ data class Strana(
     val smenaTreca: Smena,
 
     val temp1: Float,
+    val tempVreme1: Date,
     val temp2: Float,
+    val tempVreme2: Date,
     val temp3: Float,
+    val tempVreme3: Date,
+
 
     val sunacnoOblacnoKisa: String,
     val brzinaVetra: String,

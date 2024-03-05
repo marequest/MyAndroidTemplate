@@ -332,19 +332,13 @@ fun TemplateNavHost(
             )
         }
         composable(NavDestinations.DNEVNIK_SETTINGS_SCREEN) {
-            DnevnikSettingsScreen(dnevnikViewModel.uiState.collectAsState().value.strana?.dnevnikId.toString())
+            DnevnikSettingsScreen(
+                dnevnikViewModel.uiState.collectAsState().value.strana?.dnevnikId.toString()
+            )
         }
         composable(NavDestinations.DNEVNIK_FORM_SCREEN) {
-
-            // TODO Vidi sto selectedStranica ne apdejtuje datum instant
             StranicaFormScreen(
                 viewModel = dnevnikViewModel,
-                changeStranica = {
-                    dnevnikViewModel.updateStranaId(it)
-                },
-                updateStranaDate = {
-                    dnevnikViewModel.updateStranaDate(it)
-                }
             )
         }
         composable(NavDestinations.PROFILE_SCREEN) {
