@@ -1,6 +1,7 @@
 package com.example.template.viewmodels
 
 import androidx.lifecycle.ViewModel
+import com.example.template.fakedata.Smena
 import com.example.template.fakedata.Strana
 import com.example.template.fakedata.StraniceDataProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,12 +14,9 @@ import java.util.Date
 import javax.inject.Inject
 
 data class DnevnikUiState(
-//    val dnevnikId: String? = null,
-//    val stranicaId: String? = null,
-    val strana: Strana? = null,  // Added the entire Strana state
-    val loading: Boolean = false,
+    val strana: Strana? = null,
+    val loading: Boolean = false
 )
-
 @HiltViewModel
 class StraniceScreenViewModel @Inject constructor() : ViewModel() {
 
@@ -27,9 +25,6 @@ class StraniceScreenViewModel @Inject constructor() : ViewModel() {
 
     init {
         initialStranaState()
-
-//        setDnevnikId(DnevniciDataProvider.getLastDnevnik().id.toString())
-//        setStranicaId(StraniceDataProvider.getLastStranica().stranaId.toString())
     }
 
     private fun initialStranaState() {
@@ -41,19 +36,11 @@ class StraniceScreenViewModel @Inject constructor() : ViewModel() {
         return StraniceDataProvider.getLastStranica()
     }
 
-    fun updateStrana(newStrana: Strana) {
+    fun goToThisStrana(newStrana: Strana) {
         _uiState.update { it.copy(strana = newStrana, loading = false) }
     }
-    fun updateStranaId(newStranaId: Long) {
-        val newStrana = fetchStranaById(newStranaId)
-        /// TODO Ovde moze provera ako je newStrana null da nista ne uradi
-        _uiState.update { currentState ->
-            currentState.copy(strana = newStrana, loading = false)
-        }
-        println("Promenjena stranica na: $newStranaId")
-    }
 
-    fun setDnevnikId(newDnevnikId: Long) {
+    fun goToDnevnik(newDnevnikId: Long) {
         _uiState.update { currentState ->
             val newStrana = StraniceDataProvider.allStranice.lastOrNull {
                 it.dnevnikId == newDnevnikId
@@ -67,16 +54,31 @@ class StraniceScreenViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun updateStrana(newStranaId: Long, newDnevnikId: Long) {
-        val newStrana = fetchStranaByIdAndDnevnikId(newStranaId, newDnevnikId)
+    fun goToStrana(newStranaId: Long) {
+        val newStrana = fetchStranaById(newStranaId)
         /// TODO Ovde moze provera ako je newStrana null da nista ne uradi
         _uiState.update { currentState ->
-            currentState.copy(strana = newStrana, loading = false)
+            if(newStrana != null) {
+                currentState.copy(strana = newStrana, loading = false)
+            } else {
+                currentState
+            }
         }
     }
 
-    fun updateStranaDate(newStranaDate: Date) {
-        /// TODO Ovo treba da proveri ako postoji stranica sa datumom pa da predje na tu stranicu
+    fun goToStranaAtDnevnik(newStranaId: Long, newDnevnikId: Long) {
+        val newStrana = fetchStranaByIdAndDnevnikId(newStranaId, newDnevnikId)
+        /// TODO Ovde moze provera ako je newStrana null da nista ne uradi
+        _uiState.update { currentState ->
+            if(newStrana != null) {
+                currentState.copy(strana = newStrana, loading = false)
+            } else {
+                currentState
+            }
+        }
+    }
+
+    fun goToStranaByDate(newStranaDate: Date) {
         _uiState.update { currentState ->
             val matchingStrana = findStranaByDate(newStranaDate)
 
@@ -91,17 +93,58 @@ class StraniceScreenViewModel @Inject constructor() : ViewModel() {
             }
         }
     }
-    private fun findStranaByDate(date: Date): Strana? {
-        // Implement the logic to search for a Strana with the specified date
-        // This is just a placeholder, replace with your actual data fetching/search logic
 
+    fun updateInfoORadnicima(kojaSmena: Int, smena: Smena) {
+        _uiState.update { currentState ->
+            val currentStrana = currentState.strana
+            if (currentStrana != null) {
+                if (kojaSmena in currentStrana.smenaRadnici.indices) {
+                    val updatedSmenaRadnici = currentStrana.smenaRadnici.toMutableList().apply {
+                        this[kojaSmena] = smena
+                    }.toTypedArray()
+                    val updatedStrana = currentStrana.copy(smenaRadnici = updatedSmenaRadnici)
+
+                    currentState.copy(strana = updatedStrana, loading = false)
+                } else {
+                    println("GRESKA u updateInfoORadnicima")
+                    currentState
+                }
+            } else {
+                currentState
+            }
+        }
+    }
+    fun updateInfoOVremenu(sunacnoOblacnoKisa: String, brzinaVetra: String, nivoPodzemnihVoda: String) {
+        _uiState.update { currentState ->
+            val currentStrana = currentState.strana
+            if (currentStrana != null) {
+                val updatedStrana = currentStrana.copy(
+                    sunacnoOblacnoKisa = sunacnoOblacnoKisa,
+                    brzinaVetra = brzinaVetra,
+                    nivoPodzemnihVoda = nivoPodzemnihVoda
+                )
+                currentState.copy(strana = updatedStrana, loading = false)
+            } else {
+                currentState
+            }
+        }
+    }
+    private fun findStranaByDate(date: Date): Strana? {
         val normalizedInputDate = date.toStartOfDay()
 
         return StraniceDataProvider.allStranice.find {
             it.datumStrane.toStartOfDay() == normalizedInputDate
-        }    }
+        }
+    }
 
-    // Extension function to normalize a Date to the start of the day
+    private fun fetchStranaById(stranaId: Long): Strana? {
+        return StraniceDataProvider.getStranaById(stranaId)
+    }
+
+    private fun fetchStranaByIdAndDnevnikId(stranaId: Long, dnevnikId: Long): Strana? {
+        return StraniceDataProvider.getStranaByIdAndDnevnikId(stranaId, dnevnikId)
+    }
+
     private fun Date.toStartOfDay(): Date {
         val calendar = Calendar.getInstance()
         calendar.time = this
@@ -111,19 +154,4 @@ class StraniceScreenViewModel @Inject constructor() : ViewModel() {
         calendar.set(Calendar.MILLISECOND, 0)
         return calendar.time
     }
-    private fun fetchStranaById(stranaId: Long): Strana? {
-        return StraniceDataProvider.getStranaById(stranaId)
-    }
-
-    private fun fetchStranaByIdAndDnevnikId(stranaId: Long, dnevnikId: Long): Strana? {
-        return StraniceDataProvider.getStranaByIdAndDnevnikId(stranaId, dnevnikId)
-    }
-//    fun setDnevnikId(newId: String?) {
-//        _uiState.update { it.copy(dnevnikId = newId, loading = true) }
-//    }
-//
-//    fun setStranicaId(newId: String?) {
-//        _uiState.update { it.copy(stranicaId = newId, loading = true) }
-//    }
-
 }

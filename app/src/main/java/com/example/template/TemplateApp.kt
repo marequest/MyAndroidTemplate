@@ -322,11 +322,11 @@ fun TemplateNavHost(
         composable(NavDestinations.DNEVNICI_LIST_SCREEN) {
             DnevniciListScreen(
                 onDnevnikClick = {dnevnikId ->
-                    dnevnikViewModel.setDnevnikId(dnevnikId.toLong())
+                    dnevnikViewModel.goToDnevnik(dnevnikId.toLong())
                     navigationActions.navigateTo(NavDestinations.DNEVNIK_FORM_SCREEN)
                 },
                 onDnevnikSettingsClick = {dnevnikId ->
-                    dnevnikViewModel.setDnevnikId(dnevnikId.toLong())
+                    dnevnikViewModel.goToDnevnik(dnevnikId.toLong())
                     navigationActions.navigateTo(NavDestinations.DNEVNIK_SETTINGS_SCREEN)
                 }
             )

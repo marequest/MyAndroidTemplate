@@ -10,17 +10,8 @@ data class Strana(
     val danStrane: String,
     val datumStrane: Date,
 
-    val smenaPrva: Smena,
-    val smenaDruga: Smena,
-    val smenaTreca: Smena,
-
-    val temp1: Float,
-    val tempVreme1: Date,
-    val temp2: Float,
-    val tempVreme2: Date,
-    val temp3: Float,
-    val tempVreme3: Date,
-
+    val smenaRadnici: Array<Smena>,
+    val smenaTemp: Array<TempRecord>,
 
     val sunacnoOblacnoKisa: String,
     val brzinaVetra: String,
@@ -43,4 +34,8 @@ data class Smena(
     val brZanatlija: Int,
     val brTehOsoblja: Int,
     val brOstali: Int
+)
+data class TempRecord(
+    val temp: Float,
+    val tempVreme: Date
 )

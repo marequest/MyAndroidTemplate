@@ -67,19 +67,16 @@ object StraniceDataProvider {
     var allStranice = mutableListOf(
         Strana(
             stranaId = 1L,
-            projekatId = 1,
-            dnevnikId = 1,
+            projekatId = 1L,
+            dnevnikId = 1L,
             danStrane = "Ponedeljak",
             datumStrane = createDate(2023, 3, 15),
-            smenaPrva = smena1,
-            smenaDruga = smena2,
-            smenaTreca = smena1, // Reusing smena1 for simplicity
-            temp1 = 15.5f,
-            tempVreme1 = createDate(2023, 3, 15, 11, 0),
-            temp2 = 18.0f,
-            tempVreme2 = createDate(2023, 3, 15, 14, 0),
-            temp3 = 20.3f,
-            tempVreme3 = createDate(2023, 3, 15, 17, 0),
+            smenaRadnici = arrayOf(smena1, smena2, smena1), // Array of shifts
+            smenaTemp = arrayOf( // Array of temperature records
+                TempRecord(temp = 15.5f, tempVreme = createDate(2023, 3, 15, 11, 0)),
+                TempRecord(temp = 18.0f, tempVreme = createDate(2023, 3, 15, 14, 0)),
+                TempRecord(temp = 20.3f, tempVreme = createDate(2023, 3, 15, 17, 0))
+            ),
             sunacnoOblacnoKisa = "Sunčano",
             brzinaVetra = "Slab",
             nivoPodzemnihVoda = "Normalan",
@@ -92,19 +89,16 @@ object StraniceDataProvider {
         ),
         Strana(
             stranaId = 2L,
-            projekatId = 2,
-            dnevnikId = 1,
+            projekatId = 2L,
+            dnevnikId = 1L,
             danStrane = "Utorak",
             datumStrane = createDate(2023, 3, 16),
-            smenaPrva = smena1,
-            smenaDruga = smena3,
-            smenaTreca = smena4, // Reusing smena1 for simplicity
-            temp1 = 18.5f,
-            tempVreme1 = createDate(2023, 3, 16, 11, 0),
-            temp2 = 14.0f,
-            tempVreme2 = createDate(2023, 3, 16, 14, 0),
-            temp3 = 21.3f,
-            tempVreme3 = createDate(2023, 3, 16, 17, 0),
+            smenaRadnici = arrayOf(smena1, smena3, smena4), // Adjusted to array of shifts
+            smenaTemp = arrayOf( // Adjusted to array of temperature records
+                TempRecord(temp = 18.5f, tempVreme = createDate(2023, 3, 16, 11, 0)),
+                TempRecord(temp = 14.0f, tempVreme = createDate(2023, 3, 16, 14, 0)),
+                TempRecord(temp = 21.3f, tempVreme = createDate(2023, 3, 16, 17, 0))
+            ),
             sunacnoOblacnoKisa = "Sunčano",
             brzinaVetra = "Jak",
             nivoPodzemnihVoda = "Normalan",
@@ -117,19 +111,16 @@ object StraniceDataProvider {
         ),
         Strana(
             stranaId = 3L,
-            projekatId = 3,
-            dnevnikId = 1,
+            projekatId = 3L,
+            dnevnikId = 1L,
             danStrane = "Sreda",
             datumStrane = createDate(2023, 3, 17),
-            smenaPrva = smena3,
-            smenaDruga = smena4,
-            smenaTreca = smena1, // Reusing smena1 for simplicity
-            temp1 = 12.5f,
-            tempVreme1 = createDate(2023, 3, 15, 11, 0),
-            temp2 = 11.0f,
-            tempVreme2 = createDate(2023, 3, 17, 14, 0),
-            temp3 = 13.3f,
-            tempVreme3 = createDate(2023, 3, 17, 17, 0),
+            smenaRadnici = arrayOf(smena3, smena4, smena1), // Adjusted to array of shifts
+            smenaTemp = arrayOf( // Adjusted to array of temperature records
+                TempRecord(temp = 12.5f, tempVreme = createDate(2023, 3, 17, 11, 0)),
+                TempRecord(temp = 11.0f, tempVreme = createDate(2023, 3, 17, 14, 0)),
+                TempRecord(temp = 13.3f, tempVreme = createDate(2023, 3, 17, 17, 0))
+            ),
             sunacnoOblacnoKisa = "Oblacno",
             brzinaVetra = "Jak",
             nivoPodzemnihVoda = "Visok",
@@ -142,19 +133,16 @@ object StraniceDataProvider {
         ),
         Strana(
             stranaId = 4L,
-            projekatId = 4,
-            dnevnikId = 2,
+            projekatId = 4L,
+            dnevnikId = 1L,
             danStrane = "Ponedeljak",
             datumStrane = createDate(2023, 3, 18),
-            smenaPrva = smena2,
-            smenaDruga = smena2,
-            smenaTreca = smena4, // Reusing smena1 for simplicity
-            temp1 = 16.8f,
-            tempVreme1 = createDate(2023, 3, 18, 11, 0),
-            temp2 = 14.0f,
-            tempVreme2 = createDate(2023, 3, 18, 14, 0),
-            temp3 = 22.3f,
-            tempVreme3 = createDate(2023, 3, 18, 17, 0),
+            smenaRadnici = arrayOf(smena2, smena2, smena4), // Adjusted to array of shifts
+            smenaTemp = arrayOf( // Adjusted to array of temperature records
+                TempRecord(temp = 16.8f, tempVreme = createDate(2023, 3, 18, 11, 0)),
+                TempRecord(temp = 14.0f, tempVreme = createDate(2023, 3, 18, 14, 0)),
+                TempRecord(temp = 22.3f, tempVreme = createDate(2023, 3, 18, 17, 0))
+            ),
             sunacnoOblacnoKisa = "Sunčano",
             brzinaVetra = "Nepostojeci",
             nivoPodzemnihVoda = "Nizak",
@@ -165,6 +153,94 @@ object StraniceDataProvider {
             izvodjacRadova = "Izvođač4",
             nadzorniOrgan = "Nadzorni organ4"
         ),
+        Strana(
+            stranaId = 5L,
+            projekatId = 5L,
+            dnevnikId = 2L,
+            danStrane = "Utorak",
+            datumStrane = createDate(2023, 3, 19),
+            smenaRadnici = arrayOf(smena1, smena3, smena2),
+            smenaTemp = arrayOf(
+                TempRecord(temp = 17.2f, tempVreme = createDate(2023, 3, 19, 10, 0)),
+                TempRecord(temp = 15.4f, tempVreme = createDate(2023, 3, 19, 13, 0)),
+                TempRecord(temp = 21.6f, tempVreme = createDate(2023, 3, 19, 16, 0))
+            ),
+            sunacnoOblacnoKisa = "Oblacno",
+            brzinaVetra = "Slab",
+            nivoPodzemnihVoda = "Visok",
+            opisRada = "Izgradnja parka",
+            primedbe = "Zakašnjenje materijala",
+            prilog = "Plan parka",
+            vodeDnevnik = arrayOf("Ivan Ivanovic", "Petar Petrovic"),
+            izvodjacRadova = "Izvođač5",
+            nadzorniOrgan = "Nadzorni organ5"
+        ),
+        Strana(
+            stranaId = 6L,
+            projekatId = 6L,
+            dnevnikId = 2L,
+            danStrane = "Sreda",
+            datumStrane = createDate(2023, 3, 20),
+            smenaRadnici = arrayOf(smena4, smena1, smena3),
+            smenaTemp = arrayOf(
+                TempRecord(temp = 18.5f, tempVreme = createDate(2023, 3, 20, 9, 30)),
+                TempRecord(temp = 16.3f, tempVreme = createDate(2023, 3, 20, 12, 45)),
+                TempRecord(temp = 19.8f, tempVreme = createDate(2023, 3, 20, 15, 15))
+            ),
+            sunacnoOblacnoKisa = "Sunčano",
+            brzinaVetra = "Jak",
+            nivoPodzemnihVoda = "Srednji",
+            opisRada = "Postavljanje temelja",
+            primedbe = "Nema",
+            prilog = "Specifikacija materijala",
+            vodeDnevnik = arrayOf("Jovan Jovanovic", "Nikola Nikolic"),
+            izvodjacRadova = "Izvođač6",
+            nadzorniOrgan = "Nadzorni organ6"
+        ),
+        Strana(
+            stranaId = 7L,
+            projekatId = 7L,
+            dnevnikId = 2L,
+            danStrane = "Četvrtak",
+            datumStrane = createDate(2023, 3, 21),
+            smenaRadnici = arrayOf(smena2, smena4, smena2),
+            smenaTemp = arrayOf(
+                TempRecord(temp = 14.8f, tempVreme = createDate(2023, 3, 21, 11, 30)),
+                TempRecord(temp = 13.7f, tempVreme = createDate(2023, 3, 21, 14, 20)),
+                TempRecord(temp = 18.2f, tempVreme = createDate(2023, 3, 21, 16, 40))
+            ),
+            sunacnoOblacnoKisa = "Kišovito",
+            brzinaVetra = "Umeren",
+            nivoPodzemnihVoda = "Nizak",
+            opisRada = "Renoviranje fasade",
+            primedbe = "Oštećenje opreme",
+            prilog = "Izveštaj o oštećenju",
+            vodeDnevnik = arrayOf("Milos Milosevic", "Zoran Zoranovic"),
+            izvodjacRadova = "Izvođač7",
+            nadzorniOrgan = "Nadzorni organ7"
+        ),
+        Strana(
+            stranaId = 8L,
+            projekatId = 8L,
+            dnevnikId = 2L,
+            danStrane = "Petak",
+            datumStrane = createDate(2023, 3, 22),
+            smenaRadnici = arrayOf(smena3, smena1, smena4),
+            smenaTemp = arrayOf(
+                TempRecord(temp = 20.0f, tempVreme = createDate(2023, 3, 22, 10, 10)),
+                TempRecord(temp = 18.6f, tempVreme = createDate(2023, 3, 22, 13, 40)),
+                TempRecord(temp = 22.5f, tempVreme = createDate(2023, 3, 22, 17, 20))
+            ),
+            sunacnoOblacnoKisa = "Vetrovito",
+            brzinaVetra = "Nepostojeci",
+            nivoPodzemnihVoda = "Visok",
+            opisRada = "Izgradnja puta",
+            primedbe = "Ograničen pristup",
+            prilog = "Mapa pristupa",
+            vodeDnevnik = arrayOf("Dragan Draganovic", "Boris Boric"),
+            izvodjacRadova = "Izvođač8",
+            nadzorniOrgan = "Nadzorni organ8"
+        )
     )
 
     fun getLastStranica() = allStranice.last()

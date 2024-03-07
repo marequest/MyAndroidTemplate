@@ -68,6 +68,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.template.fakedata.Smena
+import com.example.template.fakedata.TempRecord
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Calendar
@@ -224,7 +226,8 @@ fun HorizontalLineSpacer(modifier: Modifier) {
 fun TimeSelectionRow(
     smena: Int,
     datumOdSmena: Date,
-    datumDoSmena: Date
+    datumDoSmena: Date,
+    onInputValueChange: (Int, Smena) -> Unit
 ) {
     // TODO UPDATEOVANJE
     val calendarOd = Calendar.getInstance().apply { time = datumOdSmena }
@@ -277,10 +280,13 @@ fun TimeSelectionRow(
 }
 
 @Composable
-fun TimeTemperatureRow(index: Int) {
-//    var time by remember { mutableStateOf(LocalTime.now()) }
-    var temperature by remember { mutableStateOf("") }
-//    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+fun TimeTemperatureRow(smenaTemp: TempRecord, updateTimeTemperatureRow: (TempRecord) -> Unit = {}) {
+    var temperature by remember { mutableStateOf(smenaTemp.temp.toString()) }
+
+    val calendarOd = Calendar.getInstance().apply { time = smenaTemp.tempVreme }
+    val localTimeOdSmenaOd = LocalTime.of(calendarOd.get(Calendar.HOUR_OF_DAY), calendarOd.get(Calendar.MINUTE))
+    val totalMinutesOdSmenaOd = localTimeOdSmenaOd.hour * 60 + localTimeOdSmenaOd.minute
+    var prviMinut by remember { mutableStateOf(totalMinutesOdSmenaOd) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -288,14 +294,19 @@ fun TimeTemperatureRow(index: Int) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        TimePickerTextField() {it1 -> {} }
+        TimePickerTextField(smenaTemp.tempVreme) { newValue -> prviMinut = newValue  }
 
         OutlinedTextField(
             value = temperature,
             onValueChange = { newValue ->
                 // Update only if the new value is a float number or empty
-                if (newValue.toFloatOrNull() != null || newValue.isEmpty()) {
+                if (newValue.toFloatOrNull() != null) {
                     temperature = newValue
+                    updateTimeTemperatureRow(TempRecord(temperature.toFloat(), minutesToDate(prviMinut)))
+                } else {
+                    println("Error setting temperature!")
+                    temperature = "0"
+                    updateTimeTemperatureRow(TempRecord(temperature.toFloat(), minutesToDate(prviMinut)))
                 }
             },
             label = { Text("Temperatura (°C)") },
@@ -308,10 +319,20 @@ fun TimeTemperatureRow(index: Int) {
     }
 }
 
+fun minutesToDate(prviMinut: Int): Date {
+    val calendar = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, prviMinut / 60)
+        set(Calendar.MINUTE, prviMinut % 60)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }
+    return calendar.time
+}
+
 @Composable
-fun TripleInputRow(text: String) {
+fun MyInputRow(text: String, onTextChange: (String) -> Unit) {
     // States for each input field in a row
-    var input1 by remember { mutableStateOf("") }
+    var input1 by remember { mutableStateOf(text) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -319,10 +340,13 @@ fun TripleInputRow(text: String) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        // First OutlinedTextField
+        // TODO Ako je potrebna optimizacija zbog viewModel onValueChange, Debounce User Input
         OutlinedTextField(
             value = input1,
-            onValueChange = { input1 = it },
+            onValueChange = {
+                input1 = it
+                onTextChange(it)
+            },
             label = { Text(text) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -333,38 +357,63 @@ fun TripleInputRow(text: String) {
     }
 }
 
+@Composable
+fun MutedInputRow(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        // First OutlinedTextField
+        OutlinedTextField(
+            value = text,
+            onValueChange = { },
+            label = { Text("Dan") },
+            singleLine = true,
+            enabled = false,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 4.dp)
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LargeDescriptionTextField() {
-    var text by remember { mutableStateOf("") }
+fun LargeDescriptionTextField(opisRada: String, updateOpisRada: (String) -> Unit) {
+    var text by remember { mutableStateOf(opisRada) }
 
-    // Calculate the approximate height for 5 rows. Adjust the multiplier as needed for your font size and padding.
-    val minHeight = 240.dp // Assuming each row is roughly 24.dp in height, adjust based on your actual text size and padding.
+    val minHeight = 240.dp
 
     OutlinedTextField(
         value = text,
         onValueChange = { newText ->
             text = newText
+            updateOpisRada(text)
         },
         label = { Text("Opis Rada") },
         placeholder = { Text("Opis Rada") },
         singleLine = false,
-        maxLines = 8, // Makes the text field multiline, but visually restricts it to 5 lines initially.
+        maxLines = 8,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = minHeight) // Ensures the text field has a minimum height equivalent to 5 rows.
+            .heightIn(min = minHeight)
             .padding(0.dp),
         textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onSurface),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = { /* Handle the 'Done' action */ }),
+        keyboardActions = KeyboardActions(onDone = {
+//            updateOpisRada(text) TODO Proveri da li ovde
+        }),
         colors = TextFieldDefaults.outlinedTextFieldColors()
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LargePrimedbeTextField() {
-    var text by remember { mutableStateOf("") }
+fun LargePrimedbeTextField(primedbe: String, updatePrimedbe: (String) -> Unit) {
+    var text by remember { mutableStateOf(primedbe) }
 
     // Calculate the approximate height for 5 rows. Adjust the multiplier as needed for your font size and padding.
     val minHeight = 240.dp // Assuming each row is roughly 24.dp in height, adjust based on your actual text size and padding.
@@ -373,6 +422,7 @@ fun LargePrimedbeTextField() {
         value = text,
         onValueChange = { newText ->
             text = newText
+            updatePrimedbe(text)
         },
         label = { Text("Primedbe") },
         placeholder = { Text("Primedbe") },
@@ -390,18 +440,18 @@ fun LargePrimedbeTextField() {
 }
 
 @Composable
-fun NumberInputLayout(smena: Int, brGradjRadnika: Int, brZanatlija: Int, brTehOsoblja: Int, brOstali: Int) {
+fun NumberInputLayout(kojaSmena: Int, smena: Smena, onInputValueChange: (Int, Smena) -> Unit) {
     Column {
-        var number1 by remember { mutableStateOf(brGradjRadnika) }
-        var number2 by remember { mutableStateOf(brZanatlija) }
-        var number3 by remember { mutableStateOf(brTehOsoblja) }
-        var number4 by remember { mutableStateOf(brOstali) }
+        var number1 by remember { mutableStateOf(smena.brGradjRadnika) }
+        var number2 by remember { mutableStateOf(smena.brZanatlija) }
+        var number3 by remember { mutableStateOf(smena.brTehOsoblja) }
+        var number4 by remember { mutableStateOf(smena.brOstali) }
 
         val numbers = listOf(
-            Pair("Gradjevinski radnici", brGradjRadnika),
-            Pair("Zanatlije", brZanatlija),
-            Pair("Tehnicko osoblje", brTehOsoblja),
-            Pair("Ostali", brOstali)
+            Pair("Gradjevinski radnici", smena.brGradjRadnika),
+            Pair("Zanatlije", smena.brZanatlija),
+            Pair("Tehnicko osoblje", smena.brTehOsoblja),
+            Pair("Ostali", smena.brOstali)
         )
 
         Column {
@@ -410,7 +460,7 @@ fun NumberInputLayout(smena: Int, brGradjRadnika: Int, brZanatlija: Int, brTehOs
                 OutlinedTextField(
                     value = value.toString(),
                     onValueChange = { newValue ->
-//                                    updateRadnikeSmene(smena, brGradjRadnika, brZanatlija, brOstali)
+//                                    updateRadnikeSmene(smena, brGradjRadnika, brZanatlija, brTehOsoblja, brOstali)
 //                        if (newValue.all { it.isDigit() }) { // Ensure only digits are taken
 //                            when (index) {
 //                                0 -> number1 = newValue.toInt()
@@ -445,7 +495,7 @@ fun NumberInputLayout(smena: Int, brGradjRadnika: Int, brZanatlija: Int, brTehOs
 }
 
 @Composable
-fun FilePicker() {
+fun FilePicker(dodajPrilog: (String) -> Unit) {
     var fileName by remember { mutableStateOf<String?>(null) }
 
     // Prepare the launcher
@@ -453,6 +503,7 @@ fun FilePicker() {
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         // Handle the returned Uri, extract file name
+        dodajPrilog(uri.toString())
         uri?.let {
             fileName = it.lastPathSegment // This gets the file name. Depending on the file and source, you might need to handle this differently
         }
@@ -503,74 +554,6 @@ fun TimePickerTextField(
     val timePickerState = rememberTimePickerState(
         initialHour = datumOdSmena1.hours,
         initialMinute = datumOdSmena1.minutes,
-        is24Hour = true
-    )
-    Text(
-        text = "${timePickerState.hour}:${timePickerState.minute}",
-        fontSize = 24.sp,
-        modifier = Modifier
-            .padding(8.dp)
-            .clickable { showingDialog = true },
-        color = MaterialTheme.colorScheme.primary
-    )
-
-    if (showingDialog) {
-        AlertDialog(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(size = 12.dp)
-                ),
-            onDismissRequest = { showingDialog = false }
-        ) {
-            Column(
-                modifier = Modifier
-                    .background(
-                        color = Color.LightGray.copy(alpha = 0.3f)
-                    )
-                    .padding(top = 28.dp, start = 20.dp, end = 20.dp, bottom = 12.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // time picker
-                TimePicker(state = timePickerState)
-
-                // buttons
-                Row(
-                    modifier = Modifier
-                        .padding(top = 12.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    // dismiss button
-                    TextButton(onClick = { showingDialog = false }) {
-                        Text(text = "Dismiss")
-                    }
-
-                    // confirm button
-                    TextButton(
-                        onClick = {
-                            showingDialog = false
-                            onTimeSelected(timePickerState.hour * 60 + timePickerState.minute)
-                        }
-                    ) {
-                        Text(text = "Confirm")
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TimePickerTextField(onTimeSelected: (Int) -> Unit) {
-    var showingDialog by remember { mutableStateOf(false) }
-
-    val timePickerState = rememberTimePickerState(
-        initialHour = LocalTime.now().hour,
-        initialMinute = LocalTime.now().minute,
         is24Hour = true
     )
     Text(

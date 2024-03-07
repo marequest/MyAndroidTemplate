@@ -38,26 +38,25 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.template.fakedata.Smena
 import com.example.template.fakedata.Strana
 import com.example.template.fakedata.StraniceDataProvider
+import com.example.template.fakedata.TempRecord
 import com.example.template.pages.elements.CustomTabRow
-import com.example.template.pages.elements.DateChooser
-import com.example.template.pages.elements.DaySelector
 import com.example.template.pages.elements.DropdownTab
 import com.example.template.pages.elements.FilePicker
 import com.example.template.pages.elements.HorizontalLineSpacer
 import com.example.template.pages.elements.LabeledRow
 import com.example.template.pages.elements.LargeDescriptionTextField
 import com.example.template.pages.elements.LargePrimedbeTextField
+import com.example.template.pages.elements.MutedInputRow
 import com.example.template.pages.elements.MyHeaderText
 import com.example.template.pages.elements.NumberInputLayout
 import com.example.template.pages.elements.SimpleTopAppBar
 import com.example.template.pages.elements.Stampaj
 import com.example.template.pages.elements.TimeSelectionRow
 import com.example.template.pages.elements.TimeTemperatureRow
-import com.example.template.pages.elements.TripleInputRow
+import com.example.template.pages.elements.MyInputRow
 import com.example.template.pages.elements.showToast
 import com.example.template.viewmodels.StraniceScreenViewModel
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
 
@@ -67,11 +66,29 @@ import java.util.Date
 fun StranicaFormScreen(
     viewModel: StraniceScreenViewModel,
 ) {
-    val changeStranica: (Long) -> Unit = {
-        viewModel.updateStranaId(it)
+    val goToStrana: (Long) -> Unit = {
+        viewModel.goToStrana(it)
     }
-    val updateStranaDate: (Date) -> Unit = {
-        viewModel.updateStranaDate(it)
+    val updateStranaByDate: (Date) -> Unit = {
+        viewModel.goToStranaByDate(it)
+    }
+    val updateInfoOVremenu: (String, String, String) -> Unit = { it1, it2, it3 ->
+        viewModel.updateInfoOVremenu(it1, it2, it3)
+    }
+    val onSmenaValueChange: (Int, Smena) -> Unit = { smenaRedniBroj, smena ->
+
+    }
+    val updateTempRecords: (TempRecord, TempRecord, TempRecord) -> Unit = { it1, it2, it3 ->
+
+    }
+    val updateOpisRada: (String) -> Unit = {
+
+    }
+    val updatePrimedbe: (String) -> Unit = {
+
+    }
+    val dodajPrilog: (String) -> Unit = {
+
     }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -79,7 +96,7 @@ fun StranicaFormScreen(
     val context = LocalContext.current
 
     val strana = viewModel.uiState.collectAsState().value.strana
-//    println(strana)
+    println(strana)
 
 
     strana?.let {
@@ -134,12 +151,18 @@ fun StranicaFormScreen(
             ) {
                 TabScreenWithProgress(
                     strana = strana,
+                    dnevnikId = strana.dnevnikId,
+                    stranicaId = strana.stranaId,
                     selectedTabIndex = selectedTabIndex,
                     changeSelectedIndex = { selectedTabIndex = it },
-                    changeStranica = changeStranica,
-                    updateStranaDate = updateStranaDate,
-                    dnevnikId = strana.dnevnikId,
-                    stranicaId = strana.stranaId
+                    changeStranica = goToStrana,
+                    updateStranaDate = updateStranaByDate,
+                    onTextChange = updateInfoOVremenu,
+                    onSmenaValueChange = onSmenaValueChange,
+                    updateTempRecords = updateTempRecords,
+                    updateOpisRada = updateOpisRada,
+                    updatePrimedbe = updatePrimedbe,
+                    dodajPrilog = dodajPrilog
                 )
             }
         }
@@ -153,12 +176,18 @@ fun StranicaFormScreen(
 @Composable
 fun TabScreenWithProgress(
     strana: Strana,
+    dnevnikId: Long,
+    stranicaId: Long,
     selectedTabIndex: Int,
     changeSelectedIndex: (Int) -> Unit,
     changeStranica: (Long) -> Unit,
     updateStranaDate: (Date) -> Unit,
-    dnevnikId: Long,
-    stranicaId: Long
+    onTextChange: (String, String, String) -> Unit,
+    onSmenaValueChange: (Int, Smena) -> Unit,
+    updateTempRecords: (TempRecord, TempRecord, TempRecord) -> Unit,
+    updateOpisRada: (String) -> Unit,
+    updatePrimedbe: (String) -> Unit,
+    dodajPrilog: (String) -> Unit
 ) {
     val tabs = listOf("Korak 1", "Korak 2", "Korak 3")
     val tabIcons = listOf(Icons.Filled.LooksOne, Icons.Filled.LooksTwo, Icons.Filled.Looks3)
@@ -176,10 +205,7 @@ fun TabScreenWithProgress(
 
     val selectedDate = strana.datumStrane.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
 
-
     var showDialog by remember { mutableStateOf(false) }
-    // u TODO???? selectedDate ce biti datum dnevnika po dnevnikID-
-//    var selectedDate by remember { mutableStateOf(stranicaDate) }
     val context = LocalContext.current
 
 
@@ -193,15 +219,11 @@ fun TabScreenWithProgress(
                 updateStranaDate(Date.from(newDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
             },
             onLeftArrowClick = {
-//                changeStranica((stranicaId.toInt().minus(1)).toString())
-//                selectedDate = selectedStrana.datumStrane.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
                 changeStranica(stranicaId.minus(1))
             },
             leftArrowEnabled = stranicaId > 1,
             onRightArrowClick = {
                 changeStranica(stranicaId.plus(1))
-//                changeStranica((stranicaId.toInt() + 1).toString())
-//                selectedDate = selectedStrana.datumStrane.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
             },
             /// TODO Ovo ce trebati fix
             rightArrowEnabled = stranicaId != StraniceDataProvider.getLastStranica().stranaId
@@ -238,16 +260,24 @@ fun TabScreenWithProgress(
             when (selectedTabIndex) {
                 0 -> {
                     FirstPage(
-                        strana.smenaPrva,
-                        strana.smenaDruga,
-                        strana.smenaTreca
+                        strana,
+                        onInputValueChange = onSmenaValueChange
                     )
                 }
                 1 -> {
-                    SecondPage()
+                    SecondPage(
+                        strana,
+                        onTextChange,
+                        updateTempRecords
+                    )
                 }
                 2 -> {
-                    ThirdPage()
+                    ThirdPage(
+                        strana,
+                        updateOpisRada,
+                        updatePrimedbe,
+                        dodajPrilog
+                    )
                 }
             }
         }
@@ -257,45 +287,54 @@ fun TabScreenWithProgress(
 
 @Composable
 fun FirstPage(
-    smenaPrva: Smena,
-    smenaDruga: Smena,
-    smenaTreca: Smena
+    strana: Strana,
+    onInputValueChange: (Int, Smena) -> Unit
 ) {
+    val smenaPrva = strana.smenaRadnici[0]
+    val smenaDruga = strana.smenaRadnici[1]
+    val smenaTreca = strana.smenaRadnici[2]
     MyHeaderText(text = "Radno Vreme")
     Spacer(modifier = Modifier.height(12.dp))
     DropdownTabsRadnoVremeInput(
         smenaPrva.datumOd, smenaPrva.datumDo,
         smenaDruga.datumOd, smenaDruga.datumDo,
-        smenaTreca.datumOd, smenaTreca.datumDo
+        smenaTreca.datumOd, smenaTreca.datumDo,
+        onInputValueChange
     )
     MyHeaderText(text = "Broj Radnika")
     Spacer(modifier = Modifier.height(12.dp))
     DropdownTabsBrojRadnikaInput(
-        smenaPrva.brGradjRadnika, smenaPrva.brZanatlija, smenaPrva.brTehOsoblja, smenaPrva.brOstali,
-        smenaDruga.brGradjRadnika, smenaDruga.brZanatlija, smenaDruga.brTehOsoblja, smenaDruga.brOstali,
-        smenaTreca.brGradjRadnika, smenaTreca.brZanatlija, smenaTreca.brTehOsoblja, smenaTreca.brOstali
+        smenaPrva,
+        smenaDruga,
+        smenaTreca,
+        onInputValueChange
     )
 }
 
 @Composable
-fun SecondPage() {
+fun SecondPage(strana: Strana, onTextChange: (String, String, String) -> Unit, updateTempRecords: (TempRecord, TempRecord, TempRecord) -> Unit) {
     DateAndDaySelector()
     HorizontalLineSpacer(modifier = Modifier.padding(top = 8.dp))
-    TimeTemperatureRows()
-    TripleInputRows()
+    TimeTemperatureRows(strana.smenaTemp, updateTempRecords)
+    TripleInputRows(strana.sunacnoOblacnoKisa, strana.brzinaVetra, strana.nivoPodzemnihVoda, onTextChange)
 }
 
 @Composable
-fun ThirdPage() {
-    LargeDescriptionTextField()
+fun ThirdPage(
+    strana: Strana,
+    updateOpisRada: (String) -> Unit,
+    updatePrimedbe: (String) -> Unit,
+    dodajPrilog: (String) -> Unit
+) {
+    LargeDescriptionTextField(strana.opisRada, updateOpisRada)
     Spacer(modifier = Modifier.padding(4.dp))
-    LargePrimedbeTextField()
-    FilePicker()
+    LargePrimedbeTextField(strana.primedbe, updatePrimedbe)
+    FilePicker(dodajPrilog)
     MyHeaderText(text = "Informacije")
-    LabeledRow(label = "Vode Dnevnik", value = "")
+    LabeledRow(label = "Vode Dnevnik", value = strana.vodeDnevnik.joinToString(", "))
     // TODO Dugme
     LabeledRow(label = "Izvodjac Radova", value = "Potpis")
-    LabeledRow(label = "Nadzorni Organ", value = "")
+    LabeledRow(label = "Nadzorni Organ", value = strana.nadzorniOrgan)
 
     Spacer(modifier = Modifier.height(16.dp))
     Row {
@@ -306,37 +345,67 @@ fun ThirdPage() {
 }
 
 @Composable
-fun TimeTemperatureRows() {
-    // Repeat 3 times for 3 rows
-    repeat(3) { index ->
-        TimeTemperatureRow(index = index)
+fun TimeTemperatureRows(smenaTemp: Array<TempRecord>, updateTempRecords: (TempRecord, TempRecord, TempRecord) -> Unit) {
+    var temp1 by remember { mutableStateOf(smenaTemp[0]) }
+    var temp2 by remember { mutableStateOf(smenaTemp[1]) }
+    var temp3 by remember { mutableStateOf(smenaTemp[2]) }
+
+    LaunchedEffect(temp1, temp2, temp3) {
+        // This will be called every time text1, text2, or text3 changes
+        updateTempRecords(temp1, temp2, temp3)
+    }
+
+    TimeTemperatureRow(smenaTemp[0]) { tempRecod ->
+        temp1 = tempRecod
+    }
+    TimeTemperatureRow(smenaTemp[1]) { tempRecod ->
+        temp2 = tempRecod
+    }
+    TimeTemperatureRow(smenaTemp[2]) { tempRecod ->
+        temp3 = tempRecod
     }
 }
 
 @Composable
-fun TripleInputRows() {
-    TripleInputRow(text = "suncano, oblacno, kisa...")
-    TripleInputRow(text = "brzina vetra")
-    TripleInputRow(text = "nivo podzemnih voda")
+fun TripleInputRows(t1: String, t2: String, t3: String, onTextChange: (String, String, String) -> Unit) {
+    var text1 by remember { mutableStateOf(t1) }
+    var text2 by remember { mutableStateOf(t2) }
+    var text3 by remember { mutableStateOf(t3) }
+
+    LaunchedEffect(text1, text2, text3) {
+        // This will be called every time text1, text2, or text3 changes
+        onTextChange(text1, text2, text3)
+    }
+
+    MyInputRow(text = text1) {
+        text1 = it
+    }
+    MyInputRow(text = text2) {
+        text2 = it
+    }
+    MyInputRow(text = text3) {
+        text3 = it
+    }
 }
 
 @Composable
 fun DateAndDaySelector() {
-    DaySelector()
+    MutedInputRow(text = "Ponedeljak")
     Spacer(modifier = Modifier.height(16.dp))
 
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    val context = LocalContext.current
-    DateChooser(
-        context = context,
-        showDialog = showDialog,
-        onShowDialogChange = { showDialog = it },
-        selectedDate = selectedDate,
-        onDateSelected = { newDate ->
-            selectedDate = newDate
-        }
-    )
+    // Imam sad datum u toolbaru
+//    var showDialog by remember { mutableStateOf(false) }
+//    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+//    val context = LocalContext.current
+//    DateChooser(
+//        context = context,
+//        showDialog = showDialog,
+//        onShowDialogChange = { showDialog = it },
+//        selectedDate = selectedDate,
+//        onDateSelected = { newDate ->
+//            selectedDate = newDate
+//        }
+//    )
 }
 
 @Composable
@@ -358,7 +427,8 @@ fun DropdownTabsRadnoVremeInput(
     datumOdSmena2: Date,
     datumDoSmena2: Date,
     datumOdSmena3: Date,
-    datumDoSmena3: Date
+    datumDoSmena3: Date,
+    onInputValueChange: (Int, Smena) -> Unit
 ) {
     var expandedTab by remember { mutableStateOf<Int?>(0) } // Initially, the first tab is expanded. Use null for no tab expanded.
 
@@ -368,30 +438,31 @@ fun DropdownTabsRadnoVremeInput(
             expanded = expandedTab == 0,
             onTabClick = { expandedTab = if (expandedTab == 0) null else 0 }
         ) {
-            TimeSelectionRow(1, datumOdSmena1, datumDoSmena1)
+            TimeSelectionRow(1, datumOdSmena1, datumDoSmena1, onInputValueChange)
         }
         DropdownTab(
             title = "II Smena",
             expanded = expandedTab == 1,
             onTabClick = { expandedTab = if (expandedTab == 1) null else 1 }
         ) {
-            TimeSelectionRow(2, datumOdSmena2, datumDoSmena2)
+            TimeSelectionRow(2, datumOdSmena2, datumDoSmena2, onInputValueChange)
         }
         DropdownTab(
             title = "III Smena",
             expanded = expandedTab == 2,
             onTabClick = { expandedTab = if (expandedTab == 2) null else 2 }
         ) {
-            TimeSelectionRow(3, datumOdSmena3, datumDoSmena3)
+            TimeSelectionRow(3, datumOdSmena3, datumDoSmena3, onInputValueChange)
         }
     }
 }
 
 @Composable
 fun DropdownTabsBrojRadnikaInput(
-    brGradjRadnika: Int, brZanatlija: Int, brTehOsoblja: Int, brOstali: Int,
-    brGradjRadnika1: Int, brZanatlija1: Int, brTehOsoblja1: Int, brOstali1: Int,
-    brGradjRadnika2: Int, brZanatlija2: Int, brTehOsoblja2: Int, brOstali2: Int
+    smenaPrva: Smena,
+    smenaDruga: Smena,
+    smenaTreca: Smena,
+    onInputValueChange: (Int, Smena) -> Unit
 ) {
     var expandedTab by remember { mutableStateOf<Int?>(0) } // Initially, the first tab is expanded. Use null for no tab expanded.
 
@@ -401,21 +472,21 @@ fun DropdownTabsBrojRadnikaInput(
             expanded = expandedTab == 0,
             onTabClick = { expandedTab = if (expandedTab == 0) null else 0 }
         ) {
-            NumberInputLayout(1, brGradjRadnika, brZanatlija, brTehOsoblja, brOstali)
+            NumberInputLayout(1, smenaPrva, onInputValueChange)
         }
         DropdownTab(
             title = "II Smena",
             expanded = expandedTab == 1,
             onTabClick = { expandedTab = if (expandedTab == 1) null else 1 }
         ) {
-            NumberInputLayout(2, brGradjRadnika1, brZanatlija1, brTehOsoblja1, brOstali1)
+            NumberInputLayout(2, smenaDruga, onInputValueChange)
         }
         DropdownTab(
             title = "III Smena",
             expanded = expandedTab == 2,
             onTabClick = { expandedTab = if (expandedTab == 2) null else 2 }
         ) {
-            NumberInputLayout(3, brGradjRadnika2, brZanatlija2, brTehOsoblja2, brOstali2)
+            NumberInputLayout(3, smenaTreca, onInputValueChange)
         }
     }
 }
