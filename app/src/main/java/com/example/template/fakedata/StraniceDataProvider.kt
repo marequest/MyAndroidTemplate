@@ -16,6 +16,9 @@
 
 package com.example.template.fakedata
 
+import com.example.template.fakedata.entities.Smena
+import com.example.template.fakedata.entities.Strana
+import com.example.template.fakedata.entities.TempRecord
 import java.util.Calendar
 import java.util.Date
 

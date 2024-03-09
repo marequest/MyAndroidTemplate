@@ -16,6 +16,8 @@
 
 package com.example.template.fakedata
 
+import com.example.template.fakedata.entities.Dnevnik
+
 /**
  * An static data store of [Account]s. This includes both [Account]s owned by the current user and
  * all [Account]s of the current user's contacts.

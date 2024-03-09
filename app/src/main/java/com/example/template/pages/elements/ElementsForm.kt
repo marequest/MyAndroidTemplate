@@ -68,8 +68,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.template.fakedata.Smena
-import com.example.template.fakedata.TempRecord
+import com.example.template.fakedata.entities.Smena
+import com.example.template.fakedata.entities.TempRecord
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Calendar

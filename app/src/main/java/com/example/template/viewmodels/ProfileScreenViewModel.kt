@@ -8,6 +8,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.template.fakedata.NalogDataProvider
+import com.example.template.fakedata.StraniceDataProvider
+import com.example.template.fakedata.entities.Nalog
+import com.example.template.fakedata.entities.Strana
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ProfileUiState(
+    val nalog: Nalog? = null,
     val loading: Boolean = false,
 )
 
@@ -26,7 +31,16 @@ class ProfileScreenViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState(loading = true))
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
-    fun setDnevnikId(newId: String?) {
-        _uiState.update { it.copy(loading = true) }
+    init {
+        initializeNalog()
+    }
+
+    private fun initializeNalog() {
+        val nalog = getLoggedNalog()
+        _uiState.update { it.copy(nalog = nalog, loading = false) }
+    }
+
+    private fun getLoggedNalog(): Nalog {
+        return NalogDataProvider.getLastNalog()
     }
 }

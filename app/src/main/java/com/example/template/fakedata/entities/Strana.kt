@@ -1,4 +1,4 @@
-package com.example.template.fakedata
+package com.example.template.fakedata.entities
 
 import java.util.Date
 

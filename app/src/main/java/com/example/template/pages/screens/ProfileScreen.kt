@@ -23,12 +23,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.template.pages.elements.MyHeaderText
 import com.example.template.pages.elements.PasswordField
@@ -36,14 +38,26 @@ import com.example.template.pages.elements.SaveButton
 import com.example.template.pages.elements.SimpleTopAppBar
 import com.example.template.pages.elements.UserProfileField
 import com.example.template.pages.elements.UserSignatureField
+import com.example.template.pages.elements.showToast
+import com.example.template.viewmodels.ProfileScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    viewModel: ProfileScreenViewModel
+) {
+    val nalog = viewModel.uiState.collectAsState().value.nalog
+    println(nalog)
+
+
+    nalog?.let {
+
+    } ?: run {
+        showToast(LocalContext.current, "GRESKA: Nije pronadjena strana!")
+        EmptyComingSoon()
+    }
     val scrollState = rememberScrollState()
-
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
     Scaffold(
         topBar = { SimpleTopAppBar(scrollBehavior = scrollBehavior, text = "Postavke Naloga") },
         bottomBar = {

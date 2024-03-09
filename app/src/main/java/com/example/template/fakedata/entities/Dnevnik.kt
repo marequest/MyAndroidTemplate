@@ -1,4 +1,4 @@
-package com.example.template.fakedata
+package com.example.template.fakedata.entities
 
 data class Dnevnik(
     val id: Long,

@@ -342,7 +342,9 @@ fun TemplateNavHost(
             )
         }
         composable(NavDestinations.PROFILE_SCREEN) {
-            ProfileScreen()
+            ProfileScreen(
+                viewModel = profileScreenViewModel
+            )
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.example.template.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.example.template.fakedata.Smena
-import com.example.template.fakedata.Strana
+import com.example.template.fakedata.entities.Smena
+import com.example.template.fakedata.entities.Strana
 import com.example.template.fakedata.StraniceDataProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

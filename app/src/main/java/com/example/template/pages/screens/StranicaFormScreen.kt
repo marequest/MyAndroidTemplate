@@ -35,10 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.DialogProperties
-import com.example.template.fakedata.Smena
-import com.example.template.fakedata.Strana
+import com.example.template.fakedata.entities.Smena
+import com.example.template.fakedata.entities.Strana
 import com.example.template.fakedata.StraniceDataProvider
-import com.example.template.fakedata.TempRecord
+import com.example.template.fakedata.entities.TempRecord
 import com.example.template.pages.elements.CustomTabRow
 import com.example.template.pages.elements.DropdownTab
 import com.example.template.pages.elements.FilePicker
@@ -64,7 +64,7 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StranicaFormScreen(
-    viewModel: StraniceScreenViewModel,
+    viewModel: StraniceScreenViewModel
 ) {
     val goToStrana: (Long) -> Unit = {
         viewModel.goToStrana(it)
