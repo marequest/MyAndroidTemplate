@@ -1,4 +1,4 @@
-![MyAndroidTemplateRecording (2)](https://github.com/marequest/MyAndroidTemplate/assets/38961465/84698f22-806d-4413-bcad-4a499a70ceff)# This is template for current and possibly future Android projects.
+# This is template for current and possibly future Android projects.
 
 This template is done fully in jetpack Compose using Kotlin.
 
