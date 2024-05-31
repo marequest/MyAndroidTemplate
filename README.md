@@ -24,4 +24,4 @@ It's use is to display a lot of information to user and allow him to write in hi
   
 ![MyAndroidTemplateRecording (2)](https://github.com/marequest/MyAndroidTemplate/assets/38961465/9dce6c4b-e558-4d82-8c64-b4f9915c1e60)
 
-> Marko Jovicic, marequest123@gmail.com
+> Marko Jovicic, markojovicic.rs@gmail.com
