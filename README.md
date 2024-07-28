@@ -1,4 +1,5 @@
-# This is template for current and possibly future Android projects.
+# This is template for current future Android projects.
+### Construction Log
 
 This template is done fully in jetpack Compose using Kotlin.
 
